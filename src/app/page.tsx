@@ -1,6 +1,6 @@
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
-import RecipeCard from "../../components/RecipeCard";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import RecipeCard from "./components/RecipeCard";
 
 export default function Home() {
   return (
