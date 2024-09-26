@@ -15,17 +15,17 @@ export default function Home() {
           <RecipeCard
             title="Spicy Ramen"
             description="A delicious and fiery ramen recipe."
-            imageUrl="https://example.com/spicy-ramen.jpg"
+            imageUrl="https://a.storyblok.com/f/178900/638x358/623d44a3df/226e72a951ed89da81d3964faad79d891519874548_full.jpg/m/638x358"
           />
           <RecipeCard
             title="Teriyaki Chicken"
             description="Sweet and savory chicken perfect for any meal."
-            imageUrl="https://example.com/teriyaki-chicken.jpg"
+            imageUrl="https://130333835.cdn6.editmysite.com/uploads/1/3/0/3/130333835/s421215818104494102_p140_i1_w400.png?width=2400&optimize=medium"
           />
           <RecipeCard
             title="Sushi Rolls"
             description="Simple and fresh sushi rolls to impress your friends."
-            imageUrl="https://example.com/sushi-rolls.jpg"
+            imageUrl="https://img.freepik.com/premium-photo/delicious-japanese-sushi-roll-asian-food-anime-style-digital-painting-illustration_768540-724.jpg?w=1380"
           />
         </div>
       </main>
