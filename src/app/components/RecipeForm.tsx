@@ -8,9 +8,46 @@ const RecipeForm = () => {
   const [ingredients, setIngredients] = useState("");
   const [image, setImage] = useState<File | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here we would handle the form submission logic, e.g., sending data to an API
+
+    // Create FormData object to include the image
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("ingredients", ingredients);
+    if (image) {
+      formData.append("image", image);
+    }
+
+    // Mock API call - Replace with actual API call once backend is ready
+    try {
+      console.log("Submitting Recipe:", {
+        title,
+        description,
+        ingredients,
+        image,
+      });
+
+      // Simulate a fetch call to a backend API (you'll replace this with your real API later)
+      const response = await fetch("/api/recipes", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        console.log("Recipe submitted successfully");
+        // Clear form after successful submission
+        setTitle("");
+        setDescription("");
+        setIngredients("");
+        setImage(null);
+      } else {
+        console.log("Failed to submit recipe");
+      }
+    } catch (error) {
+      console.error("Error submitting recipe:", error);
+    }
   };
 
   return (
@@ -32,7 +69,7 @@ const RecipeForm = () => {
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           className="mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400"
-          placeholder="e.g. Spicy Ramen"
+          placeholder="Remember to be Descriptive 🌠"
         />
       </div>
 
@@ -45,7 +82,7 @@ const RecipeForm = () => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400"
-          placeholder="Briefly describe your recipe"
+          placeholder="Describe the steps to make your recipe"
         />
       </div>
 
@@ -58,7 +95,7 @@ const RecipeForm = () => {
           value={ingredients}
           onChange={(e) => setIngredients(e.target.value)}
           className="mt-1 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400"
-          placeholder="List the ingredients"
+          placeholder="List the ingredients and amounts"
         />
       </div>
 
