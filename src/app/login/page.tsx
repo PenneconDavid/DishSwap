@@ -23,7 +23,7 @@ export default function LoginPage() {
           className="bg-white p-6 rounded-lg shadow-lg space-y-4 max-w-lg w-full"
         >
           <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
-            Login to Your Account
+            Login to Your Account 🧑‍🍳
           </h2>
 
           <div className="flex flex-col">
