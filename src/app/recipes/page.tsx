@@ -44,7 +44,7 @@ export default function BrowseRecipesPage() {
       <main className="flex-grow container mx-auto p-6">
         <div className="grid grid-cols-4 gap-6">
           {/* Filters Column */}
-          <div className="col-span-1 bg-white p-4 rounded-lg shadow-lg h-full">
+          <div className="col-span-1 bg-white p-4 rounded-lg shadow-lg ">
             <h3 className="text-xl font-bold text-gray-800 mb-4">
               Filter Recipes
             </h3>
