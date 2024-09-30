@@ -1,5 +1,5 @@
-import dbConnect from "../../../lib/mongodb";
-import Recipe from "../../../models/Recipe";
+import dbConnect from "../../lib/mongodb";
+import Recipe from "../../models/Recipe";
 
 export default async function handler(req, res) {
   const { method } = req;
