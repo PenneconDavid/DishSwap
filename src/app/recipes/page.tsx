@@ -16,17 +16,20 @@ export default function BrowseRecipesPage() {
     {
       title: "Spicy Ramen",
       description: "A fiery ramen dish.",
-      imageUrl: "/ramen.jpg",
+      imageUrl:
+        "https://a.storyblok.com/f/178900/638x358/623d44a3df/226e72a951ed89da81d3964faad79d891519874548_full.jpg/m/638x358",
     },
     {
       title: "Sushi Rolls",
       description: "Fresh and simple sushi rolls.",
-      imageUrl: "/sushi.jpg",
+      imageUrl:
+        "https://img.freepik.com/premium-photo/delicious-japanese-sushi-roll-asian-food-anime-style-digital-painting-illustration_768540-724.jpg?w=1380",
     },
     {
       title: "Teriyaki Chicken",
       description: "Sweet and savory teriyaki chicken.",
-      imageUrl: "/teriyaki.jpg",
+      imageUrl:
+        "https://130333835.cdn6.editmysite.com/uploads/1/3/0/3/130333835/s421215818104494102_p140_i1_w400.png?width=2400&optimize=medium",
     },
   ]);
 
