@@ -17,10 +17,13 @@ export default async function handler(req, res) {
       }
       break;
 
-    case "GET": // Get all comments for a recipe
+    case "GET": // Get all comments for a recipe, populated with user details
       try {
         const { recipeId } = req.query;
-        const comments = await Comment.find({ recipeId });
+        const comments = await Comment.find({ recipeId }).populate(
+          "userId",
+          "name"
+        );
         res.status(200).json({ success: true, data: comments });
       } catch (error) {
         res.status(400).json({ success: false });

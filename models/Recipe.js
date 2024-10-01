@@ -14,6 +14,10 @@ const RecipeSchema = new mongoose.Schema({
   imageUrl: {
     type: String,
   },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
 });
 
 export default mongoose.models.Recipe || mongoose.model("Recipe", RecipeSchema);
