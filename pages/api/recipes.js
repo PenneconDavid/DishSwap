@@ -1,5 +1,6 @@
 import dbConnect from "../../lib/mongodb";
 import Recipe from "../../models/Recipe";
+import { verifyToken } from "../../middleware/auth"; // Import the middleware
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -17,12 +18,15 @@ export default async function handler(req, res) {
       break;
 
     case "POST":
-      try {
-        const recipe = await Recipe.create(req.body);
-        res.status(201).json({ success: true, data: recipe });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
+      // Use the middleware to verify token before allowing access
+      verifyToken(req, res, async () => {
+        try {
+          const recipe = await Recipe.create(req.body);
+          res.status(201).json({ success: true, data: recipe });
+        } catch (error) {
+          res.status(400).json({ success: false });
+        }
+      });
       break;
 
     default:
