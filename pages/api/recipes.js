@@ -1,6 +1,6 @@
-import dbConnect from "../../../lib/mongodb";
-import Recipe from "../../../models/Recipe";
-import { verifyToken } from "../../../middleware/auth";
+import dbConnect from "../../lib/mongodb";
+import Recipe from "../../models/Recipe";
+import { verifyToken } from "../../middleware/auth";
 
 export default async function handler(req, res) {
   const { method } = req;
