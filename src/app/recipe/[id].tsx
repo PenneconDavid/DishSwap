@@ -8,7 +8,6 @@ import Footer from "../components/Footer";
 export default function RecipePage() {
   const router = useRouter();
   const { id } = router.query;
-
   const [recipe, setRecipe] = useState({
     title: "",
     description: "",
@@ -18,16 +17,14 @@ export default function RecipePage() {
 
   useEffect(() => {
     if (id) {
-      // Mock fetching recipe data by ID (replace with actual API fetch later)
-      const fetchedRecipe = {
-        title: "Spicy Ramen",
-        description:
-          "A delicious and fiery ramen dish with a blend of spices and fresh ingredients.",
-        ingredients: "Noodles, Broth, Spices, Meat, Vegetables",
-        imageUrl:
-          "https://a.storyblok.com/f/178900/638x358/623d44a3df/226e72a951ed89da81d3964faad79d891519874548_full.jpg/m/638x358",
+      const fetchRecipe = async () => {
+        const response = await fetch(`/api/recipes/${id}`);
+        const data = await response.json();
+        if (data.success) {
+          setRecipe(data.data);
+        }
       };
-      setRecipe(fetchedRecipe);
+      fetchRecipe();
     }
   }, [id]);
 
