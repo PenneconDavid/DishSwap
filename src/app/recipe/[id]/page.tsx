@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import { useParams } from "next/navigation";
+import Header from "../../components/Header";
+import Footer from "../../components/Footer";
 
 export default function RecipeView() {
-  const router = useRouter();
-  const { id } = router.query;
+  const params = useParams();
+  const id = params.id;
 
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ export default function RecipeView() {
     if (id) {
       const fetchRecipe = async () => {
         try {
-          const res = await fetch(`/api/recipes?id=${id}`);
+          const res = await fetch(`/api/recipes/${id}`);
           const data = await res.json();
           if (data.success) {
             setRecipe(data.data);

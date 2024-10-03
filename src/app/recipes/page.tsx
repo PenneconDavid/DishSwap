@@ -134,6 +134,7 @@ function RecipeContent({ recipes }: { recipes: any[] }) {
             {recipes.map((recipe) => (
               <RecipeCard
                 key={recipe._id}
+                _id={recipe._id}
                 title={recipe.title}
                 description={recipe.description}
                 imageUrl={recipe.imageUrl}
