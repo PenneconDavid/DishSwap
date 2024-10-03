@@ -1,21 +1,15 @@
-import { useState } from "react"; // Corrected import for useState
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import RecipeCard from "../components/RecipeCard";
 
-// Remove this function as it's not compatible with Next.js 13+ App Router
-// export async function getStaticProps() { ... }
-
-// Change the component to use Server Components and fetch data
+// The page now fetches recipes and uses server-side rendering for fetching the data.
 export default async function BrowseRecipesPage() {
-  // Fetch data in the component
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/recipes`
   );
   const data = await response.json();
   const recipes = data.data;
 
-  // Move client-side logic to a separate Client Component
   return (
     <div className="min-h-screen flex flex-col justify-between">
       <Header />
@@ -25,8 +19,10 @@ export default async function BrowseRecipesPage() {
   );
 }
 
-// Create a new Client Component for the interactive parts
+// Client component to manage filters and interactivity
 ("use client");
+
+import { useState } from "react";
 
 function RecipeContent({ recipes }: { recipes: any[] }) {
   const [filters, setFilters] = useState({
@@ -65,6 +61,7 @@ function RecipeContent({ recipes }: { recipes: any[] }) {
               <option value="Mexican">Mexican</option>
             </select>
           </div>
+
           <div className="mb-4">
             <label className="block text-gray-700 mb-1">Difficulty</label>
             <select
@@ -79,6 +76,7 @@ function RecipeContent({ recipes }: { recipes: any[] }) {
               <option value="Hard">Hard</option>
             </select>
           </div>
+
           <div className="mb-4">
             <label className="block text-gray-700 mb-1">Cooking Time</label>
             <select
