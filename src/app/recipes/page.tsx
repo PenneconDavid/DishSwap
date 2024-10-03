@@ -1,16 +1,52 @@
-("use client");
+"use client";
 
+import { useState, useEffect } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import RecipeCard from "../components/RecipeCard";
 
-// The page now fetches recipes and uses server-side rendering for fetching the data.
-export default async function BrowseRecipesPage() {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/api/recipes`
-  );
-  const data = await response.json();
-  const recipes = data.data;
+export default function BrowseRecipesPage() {
+  const [recipes, setRecipes] = useState([]);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchRecipes() {
+      try {
+        setIsLoading(true);
+        const apiUrl =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+        const response = await fetch(`${apiUrl}/api/recipes`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("API response:", data); // Debugging line
+
+        if (data.success) {
+          setRecipes(data.data || []);
+        } else {
+          throw new Error("API returned success: false");
+        }
+      } catch (e) {
+        console.error("Failed to fetch recipes:", e);
+        setError("Failed to load recipes. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchRecipes();
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading recipes...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
@@ -22,8 +58,6 @@ export default async function BrowseRecipesPage() {
 }
 
 // Client component to manage filters and interactivity
-
-import { useState } from "react";
 
 function RecipeContent({ recipes }: { recipes: any[] }) {
   const [filters, setFilters] = useState({
