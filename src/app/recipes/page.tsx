@@ -1,3 +1,5 @@
+("use client");
+
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import RecipeCard from "../components/RecipeCard";
@@ -20,7 +22,6 @@ export default async function BrowseRecipesPage() {
 }
 
 // Client component to manage filters and interactivity
-("use client");
 
 import { useState } from "react";
 
