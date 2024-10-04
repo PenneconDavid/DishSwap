@@ -1,8 +1,42 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import RecipeCard from "./components/RecipeCard";
 
 export default function Home() {
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    async function fetchRecipes() {
+      try {
+        const apiUrl =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+        const response = await fetch(`${apiUrl}/api/recipes?limit=3`);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        if (data.success) {
+          setRecipes(data.data || []);
+        } else {
+          throw new Error("API returned success: false");
+        }
+      } catch (e) {
+        console.error("Failed to fetch recipes:", e);
+        setError("Failed to load recipes. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchRecipes();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col justify-between">
       <Header />
@@ -10,24 +44,23 @@ export default function Home() {
         <h1 className="text-4xl font-bold mb-6 text-center">
           Welcome to DishSwap 🍜
         </h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Example Recipe Cards */}
-          <RecipeCard
-            title="Spicy Ramen"
-            description="A delicious and fiery ramen recipe."
-            imageUrl="https://a.storyblok.com/f/178900/638x358/623d44a3df/226e72a951ed89da81d3964faad79d891519874548_full.jpg/m/638x358"
-          />
-          <RecipeCard
-            title="Teriyaki Chicken"
-            description="Sweet and savory chicken perfect for any meal."
-            imageUrl="https://130333835.cdn6.editmysite.com/uploads/1/3/0/3/130333835/s421215818104494102_p140_i1_w400.png?width=2400&optimize=medium"
-          />
-          <RecipeCard
-            title="Sushi Rolls"
-            description="Simple and fresh sushi rolls to impress your friends."
-            imageUrl="https://img.freepik.com/premium-photo/delicious-japanese-sushi-roll-asian-food-anime-style-digital-painting-illustration_768540-724.jpg?w=1380"
-          />
-        </div>
+        {loading ? (
+          <p>Loading recipes...</p>
+        ) : error ? (
+          <p className="text-red-500">{error}</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recipes.map((recipe) => (
+              <RecipeCard
+                key={recipe._id}
+                _id={recipe._id}
+                title={recipe.title}
+                description={recipe.description}
+                imageUrl={recipe.imageUrl}
+              />
+            ))}
+          </div>
+        )}
       </main>
       <Footer />
     </div>
