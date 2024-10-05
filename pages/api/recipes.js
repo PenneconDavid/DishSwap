@@ -1,77 +1,58 @@
 import dbConnect from "../../lib/mongodb";
 import Recipe from "../../models/Recipe";
 import { verifyToken } from "../../middleware/auth";
+import multer from "multer";
+import nextConnect from "next-connect";
 
-export default async function handler(req, res) {
-  const { method } = req;
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: "./public/uploads", // Store uploaded files in the "public/uploads" directory
+    filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
+  }),
+});
 
-  await dbConnect();
+const apiRoute = nextConnect({
+  onError(error, req, res) {
+    res.status(501).json({ error: `Something went wrong: ${error.message}` });
+  },
+  onNoMatch(req, res) {
+    res.status(405).json({ error: `Method ${req.method} Not Allowed` });
+  },
+});
 
-  switch (method) {
-    case "GET":
-      try {
-        const recipes = await Recipe.find({});
-        res.status(200).json({ success: true, data: recipes });
-      } catch (error) {
-        res.status(400).json({ success: false });
-      }
-      break;
+apiRoute.use(upload.single("image")); // Use multer for handling the "image" field
 
-    case "POST":
-      verifyToken(req, res, async () => {
-        try {
-          const recipe = await Recipe.create({
-            ...req.body,
-            userId: req.user.id,
-          });
-          res.status(201).json({ success: true, data: recipe });
-        } catch (error) {
-          res.status(400).json({ success: false });
-        }
-      });
-      break;
+apiRoute.post(verifyToken, async (req, res) => {
+  try {
+    const { title, description, ingredients } = req.body;
+    const imageUrl = `/uploads/${req.file.filename}`; // Image path to store in the database
 
-    case "PUT": // Update a recipe
-      verifyToken(req, res, async () => {
-        try {
-          const { id } = req.query;
-          const recipe = await Recipe.findByIdAndUpdate(id, req.body, {
-            new: true,
-            runValidators: true,
-          });
-          if (!recipe) {
-            return res
-              .status(400)
-              .json({ success: false, message: "Recipe not found" });
-          }
-          res.status(200).json({ success: true, data: recipe });
-        } catch (error) {
-          res.status(400).json({ success: false });
-        }
-      });
-      break;
+    const recipe = await Recipe.create({
+      title,
+      description,
+      ingredients,
+      imageUrl,
+      userId: req.user.id,
+    });
 
-    case "DELETE": // Delete a recipe
-      verifyToken(req, res, async () => {
-        try {
-          const { id } = req.query;
-          const recipe = await Recipe.findByIdAndDelete(id);
-          if (!recipe) {
-            return res
-              .status(400)
-              .json({ success: false, message: "Recipe not found" });
-          }
-          res
-            .status(200)
-            .json({ success: true, message: "Recipe deleted successfully" });
-        } catch (error) {
-          res.status(400).json({ success: false });
-        }
-      });
-      break;
-
-    default:
-      res.status(400).json({ success: false });
-      break;
+    res.status(201).json({ success: true, data: recipe });
+  } catch (error) {
+    res.status(400).json({ success: false, error: "Error creating recipe" });
   }
-}
+});
+
+apiRoute.get(async (req, res) => {
+  try {
+    const recipes = await Recipe.find({});
+    res.status(200).json({ success: true, data: recipes });
+  } catch (error) {
+    res.status(400).json({ success: false });
+  }
+});
+
+export default apiRoute;
+export const config = {
+  api: {
+    bodyParser: false, // Disable body parsing for file uploads
+  },
+};
