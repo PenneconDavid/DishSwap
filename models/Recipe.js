@@ -11,7 +11,10 @@ const RecipeSchema = new mongoose.Schema({
   ingredients: {
     type: String,
   },
-  imageUrl: {
+  imageData: {
+    type: Buffer,
+  },
+  imageType: {
     type: String,
   },
   userId: {
