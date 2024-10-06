@@ -55,22 +55,22 @@ export default async function handler(req, res) {
     case "POST":
       try {
         await runMiddleware(req, res, upload.single("image"));
-        verifyToken(req, res, async () => {
-          const { title, description, ingredients } = req.body;
-          const imageBuffer = req.file ? req.file.buffer : null;
-          const imageType = req.file ? req.file.mimetype : null;
+        const { title, description, ingredients } = req.body;
+        const imageBuffer = req.file ? req.file.buffer : null;
+        const imageType = req.file ? req.file.mimetype : null;
 
-          const recipe = await Recipe.create({
-            title,
-            description,
-            ingredients,
-            imageData: imageBuffer,
-            imageType,
-            userId: req.user.id,
-          });
-          res.status(201).json({ success: true, data: recipe });
+        const recipe = await Recipe.create({
+          title,
+          description,
+          ingredients,
+          imageData: imageBuffer,
+          imageType,
+          userId: req.user ? req.user.id : null, // Handle case where user might not be authenticated
         });
+
+        res.status(201).json({ success: true, data: recipe });
       } catch (error) {
+        console.error("Error in POST /api/recipes:", error);
         res.status(400).json({ success: false, error: error.message });
       }
       break;

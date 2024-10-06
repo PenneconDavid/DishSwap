@@ -30,12 +30,17 @@ export default function RecipeForm() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to submit recipe");
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to submit recipe");
       }
 
       router.push("/recipes");
     } catch (err) {
-      setError("Failed to submit recipe. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to submit recipe. Please try again."
+      );
     }
   };
 
