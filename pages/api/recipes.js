@@ -46,15 +46,25 @@ export default async function handler(req, res) {
     case "GET":
       try {
         const recipes = await Recipe.find({});
-        res.status(200).json({ success: true, data: recipes });
+        const formattedRecipes = recipes.map((recipe) => ({
+          ...recipe._doc,
+          imageUrl: recipe.imageData
+            ? `data:${recipe.imageType};base64,${recipe.imageData.toString(
+                "base64"
+              )}`
+            : null,
+        }));
+        res.status(200).json({ success: true, data: formattedRecipes });
       } catch (error) {
         res.status(400).json({ success: false });
       }
       break;
 
     case "POST":
+      await runMiddleware(req, res, upload.single("image"));
+      // Commenting out the verifyToken middleware
+      // verifyToken(req, res, async () => {
       try {
-        await runMiddleware(req, res, upload.single("image"));
         const { title, description, ingredients } = req.body;
         const imageBuffer = req.file ? req.file.buffer : null;
         const imageType = req.file ? req.file.mimetype : null;
@@ -65,7 +75,7 @@ export default async function handler(req, res) {
           ingredients,
           imageData: imageBuffer,
           imageType,
-          userId: req.user ? req.user.id : null, // Handle case where user might not be authenticated
+          userId: req.user ? req.user.id : null,
         });
 
         res.status(201).json({ success: true, data: recipe });
@@ -73,6 +83,7 @@ export default async function handler(req, res) {
         console.error("Error in POST /api/recipes:", error);
         res.status(400).json({ success: false, error: error.message });
       }
+      // }); // This closing bracket should be removed since we're commenting out the verifyToken
       break;
 
     case "PUT":
