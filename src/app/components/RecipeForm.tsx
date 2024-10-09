@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export default function RecipeForm() {
   const [title, setTitle] = useState("");
@@ -24,17 +25,20 @@ export default function RecipeForm() {
     }
 
     try {
-      const response = await fetch("/api/recipes", {
-        method: "POST",
-        body: formData,
+      const token = localStorage.getItem("token"); // Retrieve token from local storage
+
+      // Send the form data with Axios, including the Authorization header
+      const response = await axios.post("/api/recipes", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`, // Include token
+        },
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to submit recipe");
+      if (response.status === 201) {
+        router.push("/recipes"); // Redirect on successful submission
+      } else {
+        throw new Error(response.data.error || "Failed to submit recipe");
       }
-
-      router.push("/recipes");
     } catch (err) {
       setError(
         err instanceof Error

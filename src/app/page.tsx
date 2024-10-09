@@ -15,7 +15,7 @@ export default function Home() {
       try {
         const apiUrl =
           process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-        const response = await fetch(`${apiUrl}/api/recipes?limit=3`);
+        const response = await fetch(`${apiUrl}/api/recipes?limit=9`);
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import fallbackImage from "../images/logo1.png";
 
 interface RecipeCardProps {
   _id: string;
@@ -17,7 +18,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
     <Link href={`/recipe/${_id}`} className="block">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <img
-          src={imageUrl || "../images/logo1.png"}
+          src={typeof imageUrl === "string" ? imageUrl : fallbackImage.src}
           alt={title}
           className="object-cover w-full h-48 rounded-lg"
         />
