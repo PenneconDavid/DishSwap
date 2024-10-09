@@ -11,18 +11,25 @@ export default function RecipeView() {
 
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (id) {
       const fetchRecipe = async () => {
         try {
-          const res = await fetch(`/api/recipes/${id}`);
+          const apiUrl =
+            process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+          const res = await fetch(`${apiUrl}/api/recipes/${id}`);
           const data = await res.json();
+
           if (data.success) {
             setRecipe(data.data);
+          } else {
+            throw new Error("Recipe data not retrieved successfully");
           }
         } catch (error) {
           console.error("Failed to fetch recipe", error);
+          setError("Failed to load recipe. Please try again later.");
         } finally {
           setLoading(false);
         }
@@ -36,23 +43,18 @@ export default function RecipeView() {
     return <div>Loading recipe...</div>;
   }
 
-  if (!recipe) {
-    return <div>Recipe not found</div>;
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
   }
-
-  // Convert image data to base64 for display
-  const imageSrc = recipe.imageData
-    ? `data:${recipe.imageType};base64,${recipe.imageData.toString("base64")}`
-    : null;
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
       <Header />
       <div className="container mx-auto p-6">
         <h1 className="text-3xl font-bold mb-4">{recipe.title}</h1>
-        {imageSrc && (
+        {recipe.imageUrl && (
           <img
-            src={imageSrc}
+            src={recipe.imageUrl}
             alt={recipe.title}
             className="w-full h-64 object-cover rounded-lg mb-4"
           />

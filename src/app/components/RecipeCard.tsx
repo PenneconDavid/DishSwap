@@ -17,7 +17,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
     <Link href={`/recipe/${_id}`} className="block">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden">
         <img
-          src={imageUrl || "/placeholder.png"}
+          src={imageUrl || "../images/logo1.png"}
           alt={title}
           className="object-cover w-full h-48 rounded-lg"
         />
