@@ -9,10 +9,13 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
       const res = await fetch("/api/users", {
@@ -29,15 +32,19 @@ export default function LoginPage() {
 
       const data = await res.json();
 
-      if (data.success) {
+      if (res.ok && data.success) {
         localStorage.setItem("token", data.token);
         router.push("/profile");
       } else {
-        setError(data.message || "Login failed");
+        setError(
+          data.message || "Invalid email or password. Please try again."
+        );
       }
     } catch (error) {
       console.error("Login failed", error);
-      setError("Login failed. Please try again.");
+      setError("An unexpected error occurred. Please try again later.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -79,9 +86,10 @@ export default function LoginPage() {
           </div>
           <button
             type="submit"
-            className="w-full py-2 px-4 bg-pink-400 text-white rounded-lg"
+            className="w-full py-2 px-4 bg-pink-400 text-white rounded-lg hover:bg-pink-500"
+            disabled={loading}
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

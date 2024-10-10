@@ -10,11 +10,13 @@ export default function RecipeForm() {
   const [ingredients, setIngredients] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     const formData = new FormData();
     formData.append("title", title);
@@ -40,16 +42,19 @@ export default function RecipeForm() {
         throw new Error(response.data.error || "Failed to submit recipe");
       }
     } catch (err) {
+      console.error("Error submitting recipe:", err);
       setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to submit recipe. Please try again."
+        err.response?.data?.message ||
+          "An unexpected error occurred while submitting the recipe. Please try again."
       );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4">
+      {error && <p className="text-red-500 mb-4">{error}</p>}
       <div className="mb-4">
         <label htmlFor="title" className="block text-gray-700 font-bold mb-2">
           Title
@@ -76,6 +81,7 @@ export default function RecipeForm() {
           onChange={(e) => setDescription(e.target.value)}
           className="w-full px-3 py-2 border rounded-lg"
           rows={3}
+          required
         ></textarea>
       </div>
       <div className="mb-4">
@@ -91,6 +97,7 @@ export default function RecipeForm() {
           onChange={(e) => setIngredients(e.target.value)}
           className="w-full px-3 py-2 border rounded-lg"
           rows={5}
+          required
         ></textarea>
       </div>
       <div className="mb-4">
@@ -105,12 +112,13 @@ export default function RecipeForm() {
           className="w-full px-3 py-2 border rounded-lg"
         />
       </div>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+      {loading && <p className="text-blue-500 mb-4">Submitting...</p>}
       <button
         type="submit"
         className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+        disabled={loading}
       >
-        Submit Recipe
+        {loading ? "Submitting..." : "Submit Recipe"}
       </button>
     </form>
   );
