@@ -1,14 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Simulate login state
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  // Check if user is logged in by verifying if token exists in localStorage
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsLoggedIn(!!token);
+  }, []);
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
-    // Add logic for logging out the user
+    router.push("/"); // Redirect to home page after logout
   };
 
   return (
@@ -24,15 +33,14 @@ const Header = () => {
           >
             Recipes
           </Link>
-          {!isLoggedIn ? (
-            <Link
-              href="/login"
-              className="text-white px-4 py-2 rounded hover:bg-pink-500 transition"
-            >
-              Login
-            </Link>
-          ) : (
+          {isLoggedIn ? (
             <>
+              <Link
+                href="/submit"
+                className="text-white px-4 py-2 rounded hover:bg-pink-500 transition"
+              >
+                Submit
+              </Link>
               <Link
                 href="/profile"
                 className="text-white px-4 py-2 rounded hover:bg-pink-500 transition"
@@ -46,6 +54,13 @@ const Header = () => {
                 Logout
               </button>
             </>
+          ) : (
+            <Link
+              href="/login"
+              className="text-white px-4 py-2 rounded hover:bg-pink-500 transition"
+            >
+              Login
+            </Link>
           )}
         </nav>
       </div>
