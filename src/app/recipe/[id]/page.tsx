@@ -145,14 +145,14 @@ export default function RecipeView() {
         <h2 className="text-2xl font-bold mt-8 mb-4">Reactions</h2>
         <div className="flex space-x-4">
           <button
-            onClick={() => handleReaction("gonna_cook")}
+            onClick={() => handleReaction("cant_wait")}
             className={`px-4 py-2 rounded-lg ${
-              reaction === "gonna_cook"
+              reaction === "cant_wait"
                 ? "bg-green-400 text-white"
                 : "bg-gray-200"
             }`}
           >
-            Gonna Cook
+            Can’t wait to try it
           </button>
           <button
             onClick={() => handleReaction("cooked_banged")}
@@ -162,7 +162,7 @@ export default function RecipeView() {
                 : "bg-gray-200"
             }`}
           >
-            Cooked and It Banged
+            Cooked it and will again
           </button>
           <button
             onClick={() => handleReaction("cooked_dislike")}

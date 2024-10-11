@@ -84,5 +84,6 @@ export default async function handler(req, res) {
 export const config = {
   api: {
     bodyParser: false, // Disable default body parser for file upload
+    maxBodySize: 20 * 1024 * 1024, // Set max body size to 20MB
   },
 };

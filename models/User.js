@@ -18,6 +18,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please provide a password"],
   },
+  favorites: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Recipe",
+    },
+  ],
 });
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);
