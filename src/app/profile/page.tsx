@@ -17,8 +17,8 @@ export default function ProfilePage() {
     });
 
     // Fetch the user's favorite recipes
-    axios.get("/api/recipes/favorites").then((response) => {
-      setFavoriteRecipes(response.data);
+    axios.get("/api/favorites").then((response) => {
+      setFavoriteRecipes(response.data.favorites);
     });
   }, []);
 
