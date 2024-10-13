@@ -1,4 +1,4 @@
-import dbConnect from "../../utils/dbConnect";
+import dbConnect from "../../lib/mongodb";
 import { verifyToken } from "../../middleware/verifyToken";
 import { getUserByEmail } from "../../utils/userUtils";
 import nc from "next-connect";

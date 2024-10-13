@@ -1,5 +1,5 @@
 import nc from "next-connect";
-import dbConnect from "../../utils/dbConnect";
+import dbConnect from "../../lib/mongodb";
 import multer from "multer";
 import Recipe from "../../models/Recipe";
 import { verifyToken } from "../../middleware/verifyToken";
