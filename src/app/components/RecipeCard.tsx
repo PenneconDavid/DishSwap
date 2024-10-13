@@ -1,6 +1,7 @@
 import Link from "next/link";
 import fallbackImage from "../images/logo1.png";
 import { useState } from "react";
+import axios from "axios";
 
 interface RecipeCardProps {
   _id: string;
@@ -21,10 +22,19 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
 }) => {
   const [favorite, setFavorite] = useState(isFavorite);
 
-  const handleFavoriteClick = () => {
+  const handleFavoriteClick = async () => {
     setFavorite(!favorite);
-    if (onFavoriteToggle) {
-      onFavoriteToggle(_id);
+
+    try {
+      const action = favorite ? "remove" : "add";
+      await axios.patch("/api/recipes", { recipeId: _id, action });
+      if (onFavoriteToggle) {
+        onFavoriteToggle(_id);
+      }
+    } catch (error) {
+      console.error("Error updating favorite status:", error);
+      // Revert back the favorite state in case of an error
+      setFavorite(!favorite);
     }
   };
 
