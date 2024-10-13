@@ -1,5 +1,9 @@
 import dbConnect from "../../utils/dbConnect";
-import User from "../../models/User";
+import {
+  getUserByEmail,
+  addFavoriteRecipe,
+  removeFavoriteRecipe,
+} from "../../utils/userUtils";
 import { getSession } from "next-auth/client";
 
 export default async function handler(req, res) {
@@ -14,7 +18,7 @@ export default async function handler(req, res) {
   const userEmail = session.user.email;
 
   try {
-    const user = await User.findOne({ email: userEmail });
+    const user = await getUserByEmail(userEmail);
 
     switch (req.method) {
       case "GET":
@@ -22,23 +26,16 @@ export default async function handler(req, res) {
         const favorites = await User.findOne({ email: userEmail })
           .populate("favorites")
           .select("favorites");
-
         return res.status(200).json(favorites);
       case "POST":
         // Add a recipe to favorites
         const { recipeId } = req.body;
-        if (!user.favorites.includes(recipeId)) {
-          user.favorites.push(recipeId);
-          await user.save();
-        }
+        await addFavoriteRecipe(user, recipeId);
         return res.status(200).json({ message: "Recipe added to favorites" });
       case "DELETE":
         // Remove a recipe from favorites
         const { id } = req.query;
-        user.favorites = user.favorites.filter(
-          (favoriteId) => favoriteId.toString() !== id
-        );
-        await user.save();
+        await removeFavoriteRecipe(user, id);
         return res
           .status(200)
           .json({ message: "Recipe removed from favorites" });

@@ -1,35 +1,33 @@
-import dbConnect from "../../lib/mongodb";
-import User from "../../models/User";
-import Recipe from "../../models/Recipe";
-import { verifyToken } from "../../middleware/auth";
+import dbConnect from "../../utils/dbConnect";
+import { verifyToken } from "../../middleware/verifyToken";
+import { getUserByEmail } from "../../utils/userUtils";
+import nc from "next-connect";
 
-export default async function handler(req, res) {
-  const { method } = req;
+const handler = nc();
 
+// Use middleware to verify authentication
+handler.use(verifyToken);
+
+handler.get(async (req, res) => {
   await dbConnect();
 
-  switch (method) {
-    case "GET":
-      verifyToken(req, res, async () => {
-        try {
-          // Get the user's profile information and their recipes
-          const user = await User.findById(req.user.id);
-          const recipes = await Recipe.find({ userId: req.user.id });
+  try {
+    const userEmail = req.user.email; // Assuming verifyToken adds the email to req.user
+    const user = await getUserByEmail(userEmail);
 
-          res.status(200).json({
-            success: true,
-            data: { user, recipes },
-          });
-        } catch (error) {
-          res
-            .status(400)
-            .json({ success: false, message: "Could not fetch user profile" });
-        }
-      });
-      break;
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-    default:
-      res.status(400).json({ success: false });
-      break;
+    return res.status(200).json({
+      name: user.name,
+      email: user.email,
+      favorites: user.favorites,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong" });
   }
-}
+});
+
+export default handler;

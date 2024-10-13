@@ -1,46 +1,32 @@
-import dbConnect from "../../../lib/mongodb";
+import dbConnect from "../../../utils/dbConnect";
 import Recipe from "../../../models/Recipe";
+import nc from "next-connect";
 
-export default async function handler(req, res) {
-  const {
-    query: { id },
-    method,
-  } = req;
+const handler = nc();
 
+handler.get(async (req, res) => {
   await dbConnect();
 
-  switch (method) {
-    case "GET":
-      try {
-        const recipe = await Recipe.findById(id);
-        if (!recipe) {
-          return res
-            .status(404)
-            .json({ success: false, error: "Recipe not found" });
-        }
+  const { id } = req.query;
 
-        // Convert image data to Base64 if it exists
-        const imageUrl = recipe.imageData
-          ? `data:${recipe.imageType};base64,${recipe.imageData.toString(
-              "base64"
-            )}`
-          : recipe.imageUrl; // For older recipes with an external URL
+  try {
+    const recipe = await Recipe.findById(id);
 
-        // Send the recipe with the Base64 image or the existing image URL
-        res.status(200).json({
-          success: true,
-          data: {
-            ...recipe._doc,
-            imageUrl, // Ensure imageUrl is included for frontend compatibility
-          },
-        });
-      } catch (error) {
-        console.error("Error fetching recipe:", error);
-        res.status(400).json({ success: false });
-      }
-      break;
-    default:
-      res.status(400).json({ success: false });
-      break;
+    if (!recipe) {
+      return res.status(404).json({ message: "Recipe not found" });
+    }
+
+    // Including image handling logic
+    if (recipe.imageData && recipe.imageType) {
+      res.setHeader("Content-Type", recipe.imageType);
+      return res.status(200).send(recipe.imageData);
+    }
+
+    return res.status(200).json(recipe);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Something went wrong" });
   }
-}
+});
+
+export default handler;
