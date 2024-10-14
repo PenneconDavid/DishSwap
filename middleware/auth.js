@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export const verifyToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
-  console.log("Authorization Header:", authHeader); // Log the auth header
+  console.log("Authorization Header:", authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res
@@ -14,10 +14,11 @@ export const verifyToken = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
+    console.log("Decoded token:", decoded);
+    req.user = { id: decoded.id, email: decoded.email };
     next();
   } catch (error) {
-    console.error("Token verification failed:", error.message); // Log the error message
+    console.error("Token verification failed:", error.message);
     return res
       .status(403)
       .json({ success: false, message: "Forbidden: Invalid token" });

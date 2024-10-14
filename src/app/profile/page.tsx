@@ -11,28 +11,44 @@ export default function ProfilePage() {
   const [favoriteRecipes, setFavoriteRecipes] = useState([]);
 
   useEffect(() => {
-    // Fetch the user's uploaded recipes
-    axios.get("/api/recipes/user").then((response) => {
-      setUploadedRecipes(response.data);
-    });
+    const fetchData = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
 
-    // Fetch the user's favorite recipes
-    axios.get("/api/favorites").then((response) => {
-      setFavoriteRecipes(response.data.favorites);
-    });
+      try {
+        const [uploadedResponse, favoritesResponse] = await Promise.all([
+          axios.get("/api/recipes/user", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          axios.get("/api/favorites", {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+        ]);
+
+        setUploadedRecipes(uploadedResponse.data);
+        setFavoriteRecipes(favoritesResponse.data.favorites);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const handleDelete = (recipeId) => {
-    axios
-      .delete(`/api/recipes/${recipeId}`)
-      .then(() => {
-        setUploadedRecipes((prevRecipes) =>
-          prevRecipes.filter((recipe) => recipe._id !== recipeId)
-        );
-      })
-      .catch((error) => {
-        console.error("Error deleting recipe:", error);
+  const handleDelete = async (recipeId) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      await axios.delete(`/api/recipes/${recipeId}`, {
+        headers: { Authorization: `Bearer ${token}` },
       });
+      setUploadedRecipes((prevRecipes) =>
+        prevRecipes.filter((recipe) => recipe._id !== recipeId)
+      );
+    } catch (error) {
+      console.error("Error deleting recipe:", error);
+    }
   };
 
   return (

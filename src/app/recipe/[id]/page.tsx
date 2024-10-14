@@ -118,16 +118,22 @@ export default function RecipeView() {
       const method = isFavorite ? "delete" : "post";
       const url = isFavorite ? `/api/favorites?id=${id}` : "/api/favorites";
 
-      await axios({
+      const response = await axios({
         method,
         url,
         data: { recipeId: id },
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      setIsFavorite(!isFavorite);
+      if (response.status === 200) {
+        setIsFavorite(!isFavorite);
+        alert(response.data.message);
+      } else {
+        throw new Error("Failed to update favorite status");
+      }
     } catch (error) {
       console.error("Error updating favorite status:", error);
+      alert("Failed to update favorite status. Please try again.");
     }
   };
 

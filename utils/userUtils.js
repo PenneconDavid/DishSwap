@@ -1,12 +1,16 @@
 import User from "../models/User";
 
 /**
- * Fetch user by email
- * @param {string} email - User's email address
+ * Fetch user by ID
+ * @param {string} userId - User's ID
  * @returns {Promise<Object>} - User document
  */
-export const getUserByEmail = async (email) => {
-  return await User.findOne({ email });
+export const getUserById = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error(`User not found with ID: ${userId}`);
+  }
+  return user;
 };
 
 /**
@@ -16,6 +20,12 @@ export const getUserByEmail = async (email) => {
  * @returns {Promise<void>}
  */
 export const addFavoriteRecipe = async (user, recipeId) => {
+  if (!user) {
+    throw new Error("User object is null");
+  }
+  if (!user.favorites) {
+    user.favorites = [];
+  }
   if (!user.favorites.includes(recipeId)) {
     user.favorites.push(recipeId);
     await user.save();
@@ -29,6 +39,12 @@ export const addFavoriteRecipe = async (user, recipeId) => {
  * @returns {Promise<void>}
  */
 export const removeFavoriteRecipe = async (user, recipeId) => {
+  if (!user) {
+    throw new Error("User object is null");
+  }
+  if (!user.favorites) {
+    return; // No favorites to remove
+  }
   user.favorites = user.favorites.filter(
     (favoriteId) => favoriteId.toString() !== recipeId
   );
