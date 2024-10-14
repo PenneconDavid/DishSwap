@@ -14,6 +14,19 @@ export const getUserById = async (userId) => {
 };
 
 /**
+ * Fetch user by email
+ * @param {string} email - User's email
+ * @returns {Promise<Object>} - User document
+ */
+export const getUserByEmail = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Error(`User not found with email: ${email}`);
+  }
+  return user;
+};
+
+/**
  * Add recipe to user's favorites
  * @param {Object} user - User document
  * @param {string} recipeId - Recipe ID to add to favorites

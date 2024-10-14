@@ -2,12 +2,13 @@
 
 import Header from "../components/Header";
 import Footer from "../components/Footer";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Link from "next/link";
+import RecipeCard from "../components/RecipeCard";
 
 export default function ProfilePage() {
-  const [uploadedRecipes, setUploadedRecipes] = useState([]);
+  const [userRecipes, setUserRecipes] = useState([]);
   const [favoriteRecipes, setFavoriteRecipes] = useState([]);
 
   useEffect(() => {
@@ -16,7 +17,7 @@ export default function ProfilePage() {
       if (!token) return;
 
       try {
-        const [uploadedResponse, favoritesResponse] = await Promise.all([
+        const [userRecipesResponse, favoritesResponse] = await Promise.all([
           axios.get("/api/recipes/user", {
             headers: { Authorization: `Bearer ${token}` },
           }),
@@ -25,7 +26,7 @@ export default function ProfilePage() {
           }),
         ]);
 
-        setUploadedRecipes(uploadedResponse.data);
+        setUserRecipes(userRecipesResponse.data.data);
         setFavoriteRecipes(favoritesResponse.data.favorites);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -34,22 +35,6 @@ export default function ProfilePage() {
 
     fetchData();
   }, []);
-
-  const handleDelete = async (recipeId) => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    try {
-      await axios.delete(`/api/recipes/${recipeId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUploadedRecipes((prevRecipes) =>
-        prevRecipes.filter((recipe) => recipe._id !== recipeId)
-      );
-    } catch (error) {
-      console.error("Error deleting recipe:", error);
-    }
-  };
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
@@ -63,24 +48,12 @@ export default function ProfilePage() {
 
         <section className="mb-8">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
-            Uploaded Recipes
+            Your Recipes
           </h2>
-          {uploadedRecipes.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {uploadedRecipes.map((recipe) => (
-                <div
-                  key={recipe._id}
-                  className="bg-white p-4 rounded-lg shadow-lg"
-                >
-                  <h3 className="text-xl font-semibold mb-2">{recipe.title}</h3>
-                  <p className="text-gray-600 mb-4">{recipe.description}</p>
-                  <button
-                    onClick={() => handleDelete(recipe._id)}
-                    className="bg-red-500 text-white px-4 py-2 rounded"
-                  >
-                    Delete
-                  </button>
-                </div>
+          {userRecipes.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {userRecipes.map((recipe) => (
+                <RecipeCard key={recipe._id} recipe={recipe} />
               ))}
             </div>
           ) : (
@@ -95,20 +68,9 @@ export default function ProfilePage() {
             Favorite Recipes
           </h2>
           {favoriteRecipes.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {favoriteRecipes.map((recipe) => (
-                <Link
-                  key={recipe._id}
-                  href={`/recipe/${recipe._id}`}
-                  className="block"
-                >
-                  <div className="bg-white p-4 rounded-lg shadow-lg">
-                    <h3 className="text-xl font-semibold mb-2">
-                      {recipe.title}
-                    </h3>
-                    <p className="text-gray-600">{recipe.description}</p>
-                  </div>
-                </Link>
+                <RecipeCard key={recipe._id} recipe={recipe} />
               ))}
             </div>
           ) : (
