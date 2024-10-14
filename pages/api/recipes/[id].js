@@ -1,5 +1,6 @@
 import dbConnect from "../../../lib/mongodb";
 import Recipe from "../../../models/Recipe";
+import { ObjectId } from "mongodb";
 
 export default async function handler(req, res) {
   const {
@@ -12,6 +13,12 @@ export default async function handler(req, res) {
   switch (method) {
     case "GET":
       try {
+        if (!ObjectId.isValid(id)) {
+          return res
+            .status(400)
+            .json({ success: false, error: "Invalid recipe ID" });
+        }
+
         const recipe = await Recipe.findById(id);
         if (!recipe) {
           return res
@@ -19,19 +26,17 @@ export default async function handler(req, res) {
             .json({ success: false, error: "Recipe not found" });
         }
 
-        // Convert image data to Base64 if it exists
         const imageUrl = recipe.imageData
           ? `data:${recipe.imageType};base64,${recipe.imageData.toString(
               "base64"
             )}`
-          : recipe.imageUrl; // For older recipes with an external URL
+          : recipe.imageUrl;
 
-        // Send the recipe with the Base64 image or the existing image URL
         res.status(200).json({
           success: true,
           data: {
             ...recipe._doc,
-            imageUrl, // Ensure imageUrl is included for frontend compatibility
+            imageUrl,
           },
         });
       } catch (error) {

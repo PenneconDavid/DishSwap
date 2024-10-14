@@ -16,6 +16,7 @@ export default function RecipeView() {
   const [loading, setLoading] = useState(true);
   const [reaction, setReaction] = useState(null);
   const [error, setError] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -51,8 +52,24 @@ export default function RecipeView() {
         }
       };
 
+      const checkFavoriteStatus = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          if (!token) return;
+
+          const response = await axios.get("/api/favorites", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const favorites = response.data.favorites || [];
+          setIsFavorite(favorites.some((fav) => fav._id === id));
+        } catch (error) {
+          console.error("Error checking favorite status:", error);
+        }
+      };
+
       fetchRecipe();
       fetchComments();
+      checkFavoriteStatus();
     }
   }, [id]);
 
@@ -90,6 +107,30 @@ export default function RecipeView() {
     // Implement backend logic if needed to save the reaction
   };
 
+  const handleFavorite = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("You must be logged in to favorite a recipe");
+        return;
+      }
+
+      const method = isFavorite ? "delete" : "post";
+      const url = isFavorite ? `/api/favorites?id=${id}` : "/api/favorites";
+
+      await axios({
+        method,
+        url,
+        data: { recipeId: id },
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      console.error("Error updating favorite status:", error);
+    }
+  };
+
   if (loading) {
     return <div>Loading recipe...</div>;
   }
@@ -110,6 +151,14 @@ export default function RecipeView() {
             className="w-full h-64 object-cover rounded-lg mb-4"
           />
         )}
+        <button
+          onClick={handleFavorite}
+          className={`px-4 py-2 rounded-lg ${
+            isFavorite ? "bg-pink-500 text-white" : "bg-gray-200 text-gray-800"
+          }`}
+        >
+          {isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+        </button>
         <p className="text-gray-700 text-lg mb-6">{recipe.description}</p>
         <h2 className="text-2xl font-bold mb-4">Ingredients</h2>
         <p>{recipe.ingredients}</p>
