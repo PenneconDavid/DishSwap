@@ -32,7 +32,7 @@ export default async function handler(req, res) {
 
     const userId = req.user.id;
 
-    const userRecipes = await Recipe.find({ author: userId });
+    const userRecipes = await Recipe.find({ userId: userId });
     res.status(200).json({ success: true, data: userRecipes });
   } catch (error) {
     console.error("Error fetching user recipes:", error);
