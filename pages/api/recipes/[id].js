@@ -1,8 +1,8 @@
 import dbConnect from "../../../lib/mongodb";
 import Recipe from "../../../models/Recipe";
-import nc from "next-connect";
+import nextConnect from "next-connect";
 
-const handler = nc();
+const handler = nextConnect();
 
 handler.get(async (req, res) => {
   await dbConnect();

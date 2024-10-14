@@ -1,9 +1,9 @@
 import dbConnect from "../../lib/mongodb";
 import { verifyToken } from "../../middleware/auth";
 import { getUserByEmail } from "../../utils/userUtils";
-import nc from "next-connect";
+import nextConnect from "next-connect";
 
-const handler = nc();
+const handler = nextConnect();
 
 // Use middleware to verify authentication
 handler.use(verifyToken);
