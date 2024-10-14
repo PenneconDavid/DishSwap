@@ -2,70 +2,92 @@ import dbConnect from "../../lib/mongodb";
 import User from "../../models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import nextConnect from "next-connect";
 
-const handler = nextConnect();
+export default async function handler(req, res) {
+  const { method } = req;
 
-handler.post(async (req, res) => {
   await dbConnect();
-  const { name, email, password, type } = req.body;
 
-  if (type === "register") {
-    try {
-      const existingUser = await User.findOne({ email });
-      if (existingUser) {
-        return res
-          .status(400)
-          .json({ success: false, message: "User already exists" });
+  switch (method) {
+    case "POST": // Register or login
+      const { name, email, password, type } = req.body; // 'type' can be 'login' or 'register'
+
+      if (type === "register") {
+        try {
+          // Check if user already exists
+          const existingUser = await User.findOne({ email });
+          if (existingUser) {
+            return res
+              .status(400)
+              .json({ success: false, message: "User already exists" });
+          }
+
+          // Hash the password
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(password, salt);
+
+          // Create a new user
+          const newUser = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+          });
+
+          // Generate a JWT token
+          const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+            expiresIn: "1h",
+          });
+
+          res.status(201).json({ success: true, data: newUser, token });
+        } catch (error) {
+          console.error("Registration error:", error);
+          res.status(400).json({ success: false, message: error.message });
+        }
+      } else if (type === "login") {
+        try {
+          // Check if the user exists
+          const user = await User.findOne({ email });
+          if (!user) {
+            return res
+              .status(400)
+              .json({ success: false, message: "Invalid credentials" });
+          }
+
+          // Check if the password matches
+          const isMatch = await bcrypt.compare(password, user.password);
+          if (!isMatch) {
+            return res
+              .status(400)
+              .json({ success: false, message: "Invalid credentials" });
+          }
+
+          // Generate a JWT token
+          const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "1h",
+          });
+
+          res.status(200).json({ success: true, token });
+        } catch (error) {
+          console.error("Login error:", error);
+          res.status(400).json({ success: false, message: error.message });
+        }
+      } else {
+        res.status(400).json({ success: false, message: "Invalid type" });
       }
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      const newUser = await User.create({
-        name,
-        email,
-        password: hashedPassword,
-      });
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
-      res.status(201).json({ success: true, data: newUser, token });
-    } catch (error) {
-      res.status(400).json({ success: false, message: error.message });
-    }
-  } else if (type === "login") {
-    try {
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Invalid credentials" });
+      break;
+
+    case "GET": // Get all users (for testing purposes)
+      try {
+        const users = await User.find({});
+        res.status(200).json({ success: true, data: users });
+      } catch (error) {
+        console.error("Get users error:", error);
+        res.status(400).json({ success: false, message: error.message });
       }
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Invalid credentials" });
-      }
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
-      res.status(200).json({ success: true, token });
-    } catch (error) {
-      res.status(400).json({ success: false, message: error.message });
-    }
-  } else {
-    res.status(400).json({ success: false, message: "Invalid type" });
+      break;
+
+    default:
+      res.status(405).json({ success: false, message: "Method not allowed" });
+      break;
   }
-});
-
-handler.get(async (req, res) => {
-  await dbConnect();
-  try {
-    const users = await User.find({});
-    res.status(200).json({ success: true, data: users });
-  } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
-  }
-});
-
-export default handler;
+}
