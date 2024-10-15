@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import RecipeCard from "../components/RecipeCard";
-import fallbackImage from "../images/logo1.png";
+import fallbackImage from "../../../public/images/logo1.png";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
