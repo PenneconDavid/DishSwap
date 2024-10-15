@@ -54,20 +54,20 @@ export default function ProfilePage() {
   return (
     <div className="min-h-screen flex flex-col justify-between">
       <Header />
-      <main className="flex-grow container mx-auto p-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">Your Profile</h1>
-        <p className="text-lg text-gray-700 mb-8">
+      <main className="flex-grow container mx-auto p-4 sm:p-6">
+        <h1 className="text-4xl font-bold text-gray-800 mb-6">Your Profile</h1>
+        <p className="text-lg text-gray-700 mb-10">
           Welcome to your profile page! This section shows your personal
           information and the recipes you've contributed.
         </p>
 
-        <section className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold text-gray-800 mb-6">
             Your Recipes
           </h2>
           {userRecipes.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {userRecipes.map((recipe) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {userRecipes.slice(0, 6).map((recipe) => (
                 <RecipeCard
                   key={recipe._id}
                   _id={recipe._id}
@@ -82,15 +82,22 @@ export default function ProfilePage() {
               You haven't uploaded any recipes yet.
             </p>
           )}
+          {userRecipes.length > 6 && (
+            <div className="mt-6 text-center">
+              <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                View All Recipes
+              </button>
+            </div>
+          )}
         </section>
 
-        <section>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+        <section className="mb-12">
+          <h2 className="text-3xl font-bold text-gray-800 mb-6">
             Favorite Recipes
           </h2>
           {favoriteRecipes.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {favoriteRecipes.map((recipe) => (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {favoriteRecipes.slice(0, 6).map((recipe) => (
                 <RecipeCard
                   key={recipe._id}
                   _id={recipe._id}
@@ -105,6 +112,13 @@ export default function ProfilePage() {
             <p className="text-gray-600">
               You haven't added any favorite recipes yet.
             </p>
+          )}
+          {favoriteRecipes.length > 6 && (
+            <div className="mt-6 text-center">
+              <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                View All Favorites
+              </button>
+            </div>
           )}
         </section>
       </main>
