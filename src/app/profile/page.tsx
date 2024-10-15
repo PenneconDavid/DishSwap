@@ -9,9 +9,18 @@ import fallbackImage from "../../../public/images/logo1.png";
 import { motion } from "framer-motion";
 import Link from "next/link";
 
+interface Recipe {
+  _id: string;
+  title: string;
+  description: string;
+  imageData?: string | Buffer;
+  imageType?: string;
+  imageUrl?: string;
+}
+
 export default function ProfilePage() {
-  const [userRecipes, setUserRecipes] = useState([]);
-  const [favoriteRecipes, setFavoriteRecipes] = useState([]);
+  const [userRecipes, setUserRecipes] = useState<Recipe[]>([]);
+  const [favoriteRecipes, setFavoriteRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -21,10 +30,10 @@ export default function ProfilePage() {
 
       try {
         const [userRecipesResponse, favoritesResponse] = await Promise.all([
-          axios.get("/api/recipes/user", {
+          axios.get<{ data: Recipe[] }>("/api/recipes/user", {
             headers: { Authorization: `Bearer ${token}` },
           }),
-          axios.get("/api/favorites", {
+          axios.get<{ favorites: Recipe[] }>("/api/favorites", {
             headers: { Authorization: `Bearer ${token}` },
           }),
         ]);
@@ -41,7 +50,7 @@ export default function ProfilePage() {
     fetchData();
   }, []);
 
-  const getImageUrl = (recipe) => {
+  const getImageUrl = (recipe: Recipe): string => {
     if (recipe.imageData && recipe.imageType) {
       const base64Data =
         typeof recipe.imageData === "string"
