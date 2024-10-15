@@ -241,6 +241,8 @@ export default function RecipeView() {
                 width={1200}
                 height={800}
                 className="w-full h-64 sm:h-96 object-cover"
+                priority={true}
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 1024px, 1200px"
               />
             )}
             <div className="absolute top-0 right-0 m-4">
