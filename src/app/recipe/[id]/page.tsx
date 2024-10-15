@@ -54,6 +54,9 @@ export default function RecipeView() {
         const apiUrl =
           process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
         const res = await fetch(`${apiUrl}/api/recipes/${id}`);
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
         const data = await res.json();
 
         if (data.success) {
@@ -71,13 +74,21 @@ export default function RecipeView() {
 
     const fetchComments = async () => {
       try {
-        const res = await fetch(`/api/comments?recipeId=${id}`);
+        const apiUrl =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+        const res = await fetch(`${apiUrl}/api/comments?recipeId=${id}`);
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
         const data = await res.json();
         if (data.success) {
           setComments(data.data);
+        } else {
+          throw new Error("Comments data not retrieved successfully");
         }
       } catch (error) {
         console.error("Failed to fetch comments", error);
+        // Don't set an error state here, just log it
       }
     };
 
