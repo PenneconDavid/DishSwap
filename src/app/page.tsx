@@ -7,10 +7,19 @@ import Footer from "./components/Footer";
 import RecipeCard from "./components/RecipeCard";
 import Link from "next/link";
 
+// Define the Recipe type
+interface Recipe {
+  _id: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  // Add other properties as needed
+}
+
 export default function Home() {
-  const [recipes, setRecipes] = useState([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
@@ -22,7 +31,7 @@ export default function Home() {
     if (inView && hasMore) {
       fetchRecipes();
     }
-  }, [inView]);
+  }, [inView, hasMore]);
 
   async function fetchRecipes() {
     try {
@@ -38,7 +47,10 @@ export default function Home() {
 
       const data = await response.json();
       if (data.success) {
-        setRecipes((prevRecipes) => [...prevRecipes, ...(data.data || [])]);
+        setRecipes((prevRecipes) => [
+          ...prevRecipes,
+          ...((data.data as Recipe[]) || []),
+        ]);
         setPage((prevPage) => prevPage + 1);
         setHasMore(data.data.length === 6);
       } else {
