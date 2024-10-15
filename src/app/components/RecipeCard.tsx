@@ -1,3 +1,4 @@
+// Updated RecipeCard.tsx to handle consistent image URL processing
 import Link from "next/link";
 import fallbackImage from "../images/logo1.png";
 import { useState } from "react";
@@ -7,7 +8,7 @@ interface RecipeCardProps {
   _id: string;
   title: string;
   description: string;
-  imageUrl: string;
+  imageUrl?: string; // Make imageUrl optional
   isFavorite?: boolean;
   onFavoriteToggle?: (_id: string) => void;
 }
@@ -38,12 +39,16 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
     }
   };
 
+  const getImageSrc = (url?: string) => {
+    return url && typeof url === "string" ? url : fallbackImage.src;
+  };
+
   return (
     <div className="block">
       <Link href={`/recipe/${_id}`}>
         <div className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer">
           <img
-            src={typeof imageUrl === "string" ? imageUrl : fallbackImage.src}
+            src={getImageSrc(imageUrl)}
             alt={title}
             className="object-cover w-full h-48 rounded-lg"
           />
