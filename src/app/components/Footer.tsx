@@ -18,7 +18,12 @@ const Footer = () => {
   );
 };
 
-const SocialLink = ({ href, icon }) => (
+interface SocialLinkProps {
+  href: string;
+  icon: "twitter" | "github";
+}
+
+const SocialLink: React.FC<SocialLinkProps> = ({ href, icon }) => (
   <motion.a
     href={href}
     target="_blank"
