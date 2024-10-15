@@ -16,7 +16,10 @@ export default async function handler(req, res) {
             .status(400)
             .json({ success: false, message: "Recipe ID is required" });
         }
-        const comments = await Comment.find({ recipeId });
+        const comments = await Comment.find({ recipeId }).populate(
+          "userId",
+          "name"
+        );
         res.status(200).json({ success: true, data: comments });
       } catch (error) {
         console.error("Error fetching comments:", error);
