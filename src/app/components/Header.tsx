@@ -72,7 +72,17 @@ const Header = () => {
   );
 };
 
-const NavLinks = ({ isLoggedIn, handleLogout, isMobile = false }) => {
+interface NavLinksProps {
+  isLoggedIn: boolean;
+  handleLogout: () => void;
+  isMobile?: boolean;
+}
+
+const NavLinks: React.FC<NavLinksProps> = ({
+  isLoggedIn,
+  handleLogout,
+  isMobile = false,
+}) => {
   const linkClass = `text-white px-4 py-2 rounded hover:bg-pink-500 transition ${
     isMobile ? "block w-full text-center my-2" : "inline-block"
   }`;
