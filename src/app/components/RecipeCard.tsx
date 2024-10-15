@@ -15,6 +15,7 @@ interface RecipeCardProps {
   onFavoriteToggle?: (_id: string) => void;
   cookingTime?: string;
   difficulty?: string;
+  onClick?: () => void; // Add this line
 }
 
 const RecipeCard: React.FC<RecipeCardProps> = ({
@@ -26,6 +27,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
   onFavoriteToggle,
   cookingTime,
   difficulty,
+  onClick, // Add this line
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -44,6 +46,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
       className="bg-white rounded-xl shadow-lg overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={onClick} // Add this line
     >
       <Link href={`/recipe/${_id}`}>
         <div className="relative">

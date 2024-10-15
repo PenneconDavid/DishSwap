@@ -155,6 +155,8 @@ export default function BrowseRecipesPage() {
                       title={recipe.title}
                       description={recipe.description}
                       imageUrl={recipe.imageUrl}
+                      cookingTime={recipe.cookingTime}
+                      difficulty={recipe.difficulty}
                       onClick={() => router.push(`/recipe/${recipe._id}`)}
                     />
                   ))}
