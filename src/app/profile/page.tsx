@@ -7,6 +7,7 @@ import axios from "axios";
 import RecipeCard from "../components/RecipeCard";
 import fallbackImage from "../images/logo1.png";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function ProfilePage() {
   const [userRecipes, setUserRecipes] = useState([]);
@@ -61,25 +62,35 @@ export default function ProfilePage() {
         {loading ? (
           <div className="flex justify-center items-center min-h-[300px]">
             <motion.div
-              className="w-16 h-16 border-4 border-t-4 border-blue-500 rounded-full"
+              className="w-16 h-16 border-4 border-t-4 border-pink-500 rounded-full"
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
             />
           </div>
         ) : (
           <>
-            <h1 className="text-4xl font-bold text-gray-800 mb-6">
-              Your Profile
-            </h1>
-            <p className="text-lg text-gray-700 mb-10">
-              Welcome to your profile page! This section shows your personal
-              recipes and favorite collections.
-            </p>
+            <div className="bg-white shadow-md rounded-lg p-6 mb-8">
+              <h1 className="text-4xl font-bold text-gray-800 mb-4">
+                Your Profile
+              </h1>
+              <p className="text-lg text-gray-700">
+                Welcome to your personal recipe hub! Here you can manage your
+                creations and favorites.
+              </p>
+            </div>
 
             <section className="mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">
-                Your Recipes
-              </h2>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-3xl font-bold text-gray-800">
+                  Your Recipes
+                </h2>
+                <Link
+                  href="/submit"
+                  className="bg-pink-500 text-white font-bold py-2 px-4 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
+                >
+                  Add New Recipe
+                </Link>
+              </div>
               {userRecipes.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {userRecipes.slice(0, 6).map((recipe) => (
@@ -93,13 +104,14 @@ export default function ProfilePage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-600">
-                  You haven't uploaded any recipes yet.
-                </p>
+                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded">
+                  <p className="font-bold">No recipes yet!</p>
+                  <p>Start sharing your culinary creations with the world.</p>
+                </div>
               )}
               {userRecipes.length > 6 && (
                 <div className="mt-6 text-center">
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                  <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                     View All Recipes
                   </button>
                 </div>
@@ -124,13 +136,17 @@ export default function ProfilePage() {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-600">
-                  You haven't added any favorite recipes yet.
-                </p>
+                <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded">
+                  <p className="font-bold">No favorites yet!</p>
+                  <p>
+                    Explore recipes and start building your collection of
+                    favorites.
+                  </p>
+                </div>
               )}
               {favoriteRecipes.length > 6 && (
                 <div className="mt-6 text-center">
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                  <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
                     View All Favorites
                   </button>
                 </div>
