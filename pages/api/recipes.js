@@ -45,9 +45,10 @@ export default async function handler(req, res) {
         }));
         res.status(200).json({ success: true, data: formattedRecipes });
       } catch (error) {
+        console.error("Error in recipe API:", error);
         res
           .status(500)
-          .json({ success: false, message: "Error fetching recipes" });
+          .json({ success: false, message: "Internal server error" });
       }
       break;
 

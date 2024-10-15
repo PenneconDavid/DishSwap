@@ -1,11 +1,7 @@
 import dbConnect from "../../lib/mongodb";
 import User from "../../models/User";
 import { verifyToken } from "../../middleware/auth";
-import {
-  getUserByEmail,
-  addFavoriteRecipe,
-  removeFavoriteRecipe,
-} from "../../utils/userUtils";
+import { addFavoriteRecipe, removeFavoriteRecipe } from "../../utils/userUtils";
 
 export default async function handler(req, res) {
   await dbConnect();
