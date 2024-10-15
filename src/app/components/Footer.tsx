@@ -7,14 +7,14 @@ const Footer = () => {
         </p>
         <div className="mt-2">
           <a
-            href="https://twitter.com"
+            href="https://x.com/Davey_Rockets"
             target="_blank"
             className="text-white hover:text-gray-300 mx-2"
           >
-            Twitter
+            Twitter/X
           </a>
           <a
-            href="https://github.com"
+            href="https://github.com/PenneconDavid"
             target="_blank"
             className="text-white hover:text-gray-300 mx-2"
           >
