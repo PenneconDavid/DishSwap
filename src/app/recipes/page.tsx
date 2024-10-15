@@ -123,7 +123,7 @@ export default function BrowseRecipesPage() {
                   </label>
                   <select
                     name={filterType}
-                    value={filters[filterType]}
+                    value={filters[filterType as keyof typeof filters]}
                     onChange={handleFilterChange}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-400"
                   >
