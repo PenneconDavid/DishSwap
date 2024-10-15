@@ -10,7 +10,6 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
 
-  // Check if user is logged in by verifying if token exists in localStorage
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
@@ -19,7 +18,7 @@ const Header = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsLoggedIn(false);
-    router.push("/"); // Redirect to home page after logout
+    router.push("/");
   };
 
   return (
