@@ -9,69 +9,73 @@ import Image from "next/image";
 
 export default function RecipeView() {
   const params = useParams();
-  const id = params.id;
+  const id = params?.id as string | undefined;
 
-  const [recipe, setRecipe] = useState(null);
-  const [comments, setComments] = useState([]);
+  const [recipe, setRecipe] = useState<any>(null);
+  const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
-  const [reaction, setReaction] = useState(null);
-  const [error, setError] = useState(null);
+  const [reaction, setReaction] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
-    if (id) {
-      const fetchRecipe = async () => {
-        try {
-          const apiUrl =
-            process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-          const res = await fetch(`${apiUrl}/api/recipes/${id}`);
-          const data = await res.json();
-
-          if (data.success) {
-            setRecipe(data.data);
-          } else {
-            throw new Error("Recipe data not retrieved successfully");
-          }
-        } catch (error) {
-          console.error("Failed to fetch recipe", error);
-          setError("Failed to load recipe. Please try again later.");
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      const fetchComments = async () => {
-        try {
-          const res = await fetch(`/api/comments?recipeId=${id}`);
-          const data = await res.json();
-          if (data.success) {
-            setComments(data.data);
-          }
-        } catch (error) {
-          console.error("Failed to fetch comments", error);
-        }
-      };
-
-      const checkFavoriteStatus = async () => {
-        try {
-          const token = localStorage.getItem("token");
-          if (!token) return;
-
-          const response = await axios.get("/api/favorites", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const favorites = response.data.favorites || [];
-          setIsFavorite(favorites.some((fav) => fav._id === id));
-        } catch (error) {
-          console.error("Error checking favorite status:", error);
-        }
-      };
-
-      fetchRecipe();
-      fetchComments();
-      checkFavoriteStatus();
+    if (!id) {
+      setError("Recipe ID not found");
+      setLoading(false);
+      return;
     }
+
+    const fetchRecipe = async () => {
+      try {
+        const apiUrl =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+        const res = await fetch(`${apiUrl}/api/recipes/${id}`);
+        const data = await res.json();
+
+        if (data.success) {
+          setRecipe(data.data);
+        } else {
+          throw new Error("Recipe data not retrieved successfully");
+        }
+      } catch (error) {
+        console.error("Failed to fetch recipe", error);
+        setError("Failed to load recipe. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    const fetchComments = async () => {
+      try {
+        const res = await fetch(`/api/comments?recipeId=${id}`);
+        const data = await res.json();
+        if (data.success) {
+          setComments(data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch comments", error);
+      }
+    };
+
+    const checkFavoriteStatus = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) return;
+
+        const response = await axios.get("/api/favorites", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const favorites = response.data.favorites || [];
+        setIsFavorite(favorites.some((fav) => fav._id === id));
+      } catch (error) {
+        console.error("Error checking favorite status:", error);
+      }
+    };
+
+    fetchRecipe();
+    fetchComments();
+    checkFavoriteStatus();
   }, [id]);
 
   const handleAddComment = async (e) => {
