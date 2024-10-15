@@ -1,49 +1,56 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useInView } from "react-intersection-observer";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import RecipeCard from "./components/RecipeCard";
 import Link from "next/link";
 
-interface Recipe {
-  _id: string;
-  title: string;
-  description: string;
-  imageUrl?: string;
-}
-
 export default function Home() {
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
+  const { ref, inView } = useInView({
+    threshold: 0,
+  });
 
   useEffect(() => {
-    async function fetchRecipes() {
-      try {
-        const apiUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-        const response = await fetch(`${apiUrl}/api/recipes?limit=9`);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (data.success) {
-          setRecipes(data.data || []);
-        } else {
-          throw new Error("API returned success: false");
-        }
-      } catch (e) {
-        console.error("Failed to fetch recipes:", e);
-        setError("Failed to load recipes. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
+    if (inView && hasMore) {
+      fetchRecipes();
     }
-    fetchRecipes();
-  }, []);
+  }, [inView]);
+
+  async function fetchRecipes() {
+    try {
+      setLoading(true);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      const response = await fetch(
+        `${apiUrl}/api/recipes?limit=6&page=${page}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        setRecipes((prevRecipes) => [...prevRecipes, ...(data.data || [])]);
+        setPage((prevPage) => prevPage + 1);
+        setHasMore(data.data.length === 6);
+      } else {
+        throw new Error("API returned success: false");
+      }
+    } catch (e) {
+      console.error("Failed to fetch recipes:", e);
+      setError("Failed to load recipes. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
@@ -69,26 +76,31 @@ export default function Home() {
           <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
             Featured Recipes
           </h2>
-          {loading ? (
-            <div className="flex justify-center items-center h-64">
-              <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-pink-500"></div>
-            </div>
-          ) : error ? (
+          {error ? (
             <div className="text-center text-red-500 bg-red-100 border border-red-400 rounded p-4">
               {error}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {recipes.map((recipe) => (
-                <RecipeCard
-                  key={recipe._id}
-                  _id={recipe._id}
-                  title={recipe.title}
-                  description={recipe.description}
-                  imageUrl={recipe.imageUrl}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {recipes.map((recipe) => (
+                  <RecipeCard
+                    key={recipe._id}
+                    _id={recipe._id}
+                    title={recipe.title}
+                    description={recipe.description}
+                    imageUrl={recipe.imageUrl}
+                  />
+                ))}
+              </div>
+              {hasMore && (
+                <div ref={ref} className="flex justify-center mt-8">
+                  {loading && (
+                    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-pink-500"></div>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </section>
 
