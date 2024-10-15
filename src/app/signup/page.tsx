@@ -35,9 +35,13 @@ export default function SignUpPage() {
         router.push("/profile");
       }
     } catch (error) {
-      setError(
-        error.response?.data?.message || "An error occurred during sign up."
-      );
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.message || "An error occurred during sign up."
+        );
+      } else {
+        setError("An unexpected error occurred during sign up.");
+      }
     }
   };
 
