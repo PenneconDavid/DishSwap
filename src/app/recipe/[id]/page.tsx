@@ -12,12 +12,30 @@ interface Favorite {
   // Add other properties if needed
 }
 
+interface Recipe {
+  _id: string;
+  title: string;
+  description: string;
+  ingredients: string;
+  instructions: string;
+  imageUrl?: string;
+}
+
+interface Comment {
+  _id: string;
+  text: string;
+  userId: {
+    name: string;
+  };
+  createdAt: string;
+}
+
 export default function RecipeView() {
   const params = useParams();
   const id = params?.id as string | undefined;
 
-  const [recipe, setRecipe] = useState<any>(null);
-  const [comments, setComments] = useState<any[]>([]);
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(true);
   const [reaction, setReaction] = useState<string | null>(null);
@@ -86,7 +104,7 @@ export default function RecipeView() {
     checkFavoriteStatus();
   }, [id]);
 
-  const handleAddComment = async (e) => {
+  const handleAddComment = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const token = localStorage.getItem("token");
@@ -96,7 +114,7 @@ export default function RecipeView() {
     }
 
     try {
-      const response = await axios.post(
+      const response = await axios.post<{ data: Comment }>(
         "/api/comments",
         { recipeId: id, text: newComment },
         {
@@ -115,7 +133,7 @@ export default function RecipeView() {
     }
   };
 
-  const handleReaction = async (reactionType) => {
+  const handleReaction = async (reactionType: string) => {
     setReaction(reactionType);
     // Implement backend logic if needed to save the reaction
   };
@@ -150,8 +168,7 @@ export default function RecipeView() {
     }
   };
 
-  const renderInstructions = (instructions: string | undefined) => {
-    if (!instructions) return null;
+  const renderInstructions = (instructions: string) => {
     return instructions.split("\n").map((step, index) => (
       <li key={index} className="mb-2">
         {step.trim()}
@@ -159,14 +176,13 @@ export default function RecipeView() {
     ));
   };
 
-  const renderIngredients = (ingredients: string | undefined) => {
-    if (!ingredients) return null;
+  const renderIngredients = (ingredients: string) => {
     return ingredients
       .split("\n")
       .map((ingredient, index) => <li key={index}>{ingredient.trim()}</li>);
   };
 
-  const renderComments = (comments) => {
+  const renderComments = (comments: Comment[]) => {
     return comments.map((comment) => (
       <div key={comment._id} className="bg-gray-100 p-4 rounded-lg mb-4">
         <p className="text-gray-800">{comment.text}</p>
