@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import Image from "next/image";
 
 export default function RecipeForm() {
@@ -29,26 +29,29 @@ export default function RecipeForm() {
     }
 
     try {
-      const token = localStorage.getItem("token"); // Retrieve token from local storage
+      const token = localStorage.getItem("token");
 
-      // Send the form data with Axios, including the Authorization header
       const response = await axios.post("/api/recipes", formData, {
         headers: {
-          Authorization: `Bearer ${token}`, // Include token
+          Authorization: `Bearer ${token}`,
         },
       });
 
       if (response.status === 201) {
-        router.push("/recipes"); // Redirect on successful submission
+        router.push("/recipes");
       } else {
         throw new Error(response.data.error || "Failed to submit recipe");
       }
     } catch (err) {
       console.error("Error submitting recipe:", err);
-      setError(
-        err.response?.data?.message ||
-          "An unexpected error occurred while submitting the recipe. Please try again."
-      );
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message ||
+            "An unexpected error occurred while submitting the recipe. Please try again."
+        );
+      } else {
+        setError("An unexpected error occurred. Please try again.");
+      }
     } finally {
       setLoading(false);
     }
