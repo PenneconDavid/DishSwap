@@ -30,7 +30,13 @@ export default async function handler(req, res) {
   switch (method) {
     case "GET":
       try {
-        const recipes = await Recipe.find({});
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 6;
+        const skip = (page - 1) * limit;
+
+        const totalRecipes = await Recipe.countDocuments({});
+        const recipes = await Recipe.find({}).skip(skip).limit(limit);
+
         const formattedRecipes = recipes.map((recipe) => ({
           ...recipe._doc,
           imageUrl: recipe.imageData
@@ -39,7 +45,14 @@ export default async function handler(req, res) {
               )}`
             : recipe.imageUrl,
         }));
-        res.status(200).json({ success: true, data: formattedRecipes });
+
+        res.status(200).json({
+          success: true,
+          data: formattedRecipes,
+          page,
+          totalPages: Math.ceil(totalRecipes / limit),
+          total: totalRecipes,
+        });
       } catch (error) {
         console.error("Error in recipe API:", error);
         res
