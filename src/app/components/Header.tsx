@@ -55,12 +55,20 @@ const Header = () => {
               </button>
             </>
           ) : (
-            <Link
-              href="/login"
-              className="text-white px-4 py-2 rounded hover:bg-pink-500 transition"
-            >
-              Login
-            </Link>
+            <>
+              <Link
+                href="/login"
+                className="text-white px-4 py-2 rounded hover:bg-pink-500 transition"
+              >
+                Login
+              </Link>
+              <Link
+                href="/signup"
+                className="text-white px-4 py-2 rounded hover:bg-pink-500 transition ml-2"
+              >
+                Sign Up
+              </Link>
+            </>
           )}
         </nav>
       </div>
