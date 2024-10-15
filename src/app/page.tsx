@@ -6,10 +6,17 @@ import Footer from "./components/Footer";
 import RecipeCard from "./components/RecipeCard";
 import Link from "next/link";
 
+interface Recipe {
+  _id: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+}
+
 export default function Home() {
-  const [recipes, setRecipes] = useState([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchRecipes() {
