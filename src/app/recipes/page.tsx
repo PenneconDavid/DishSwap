@@ -6,9 +6,19 @@ import Footer from "../components/Footer";
 import RecipeCard from "../components/RecipeCard";
 import { useRouter } from "next/navigation";
 
+interface Recipe {
+  _id: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  cuisine?: string;
+  difficulty?: string;
+  cookingTime?: string;
+}
+
 export default function BrowseRecipesPage() {
-  const [recipes, setRecipes] = useState([]);
-  const [error, setError] = useState(null);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [filters, setFilters] = useState({
     cuisine: "",
@@ -49,7 +59,7 @@ export default function BrowseRecipesPage() {
     }
   };
 
-  const handleFilterChange = (e) => {
+  const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -58,7 +68,7 @@ export default function BrowseRecipesPage() {
     setCurrentPage(1);
   };
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
   };
@@ -79,7 +89,7 @@ export default function BrowseRecipesPage() {
     indexOfLastRecipe
   );
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
