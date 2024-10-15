@@ -12,7 +12,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="animate-gradient bg-gradient-to-r from-yellow-500 via-purple-500 to-red-500">
+        {children}
+      </body>
     </html>
   );
 }
