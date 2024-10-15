@@ -7,6 +7,11 @@ import Footer from "../../components/Footer";
 import axios from "axios";
 import Image from "next/image";
 
+interface Favorite {
+  _id: string;
+  // Add other properties if needed
+}
+
 export default function RecipeView() {
   const params = useParams();
   const id = params?.id as string | undefined;
@@ -63,11 +68,14 @@ export default function RecipeView() {
         const token = localStorage.getItem("token");
         if (!token) return;
 
-        const response = await axios.get("/api/favorites", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get<{ favorites: Favorite[] }>(
+          "/api/favorites",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         const favorites = response.data.favorites || [];
-        setIsFavorite(favorites.some((fav) => fav._id === id));
+        setIsFavorite(favorites.some((fav: Favorite) => fav._id === id));
       } catch (error) {
         console.error("Error checking favorite status:", error);
       }
