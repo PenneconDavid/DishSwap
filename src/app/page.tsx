@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useInView } from "react-intersection-observer";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import RecipeCard from "./components/RecipeCard";
@@ -21,17 +20,11 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
-
-  const { ref, inView } = useInView({
-    threshold: 0,
-  });
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    if (inView && hasMore) {
-      fetchRecipes();
-    }
-  }, [inView, hasMore]);
+    fetchRecipes();
+  }, [page]);
 
   async function fetchRecipes() {
     try {
@@ -47,12 +40,8 @@ export default function Home() {
 
       const data = await response.json();
       if (data.success) {
-        setRecipes((prevRecipes) => [
-          ...prevRecipes,
-          ...((data.data as Recipe[]) || []),
-        ]);
-        setPage((prevPage) => prevPage + 1);
-        setHasMore(data.data.length === 6);
+        setRecipes(data.data as Recipe[]);
+        setTotalPages(Math.ceil(data.total / 6)); // Assuming the API returns the total number of recipes
       } else {
         throw new Error("API returned success: false");
       }
@@ -63,6 +52,14 @@ export default function Home() {
       setLoading(false);
     }
   }
+
+  const handlePrevPage = () => {
+    setPage((prevPage) => Math.max(prevPage - 1, 1));
+  };
+
+  const handleNextPage = () => {
+    setPage((prevPage) => Math.min(prevPage + 1, totalPages));
+  };
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
@@ -105,13 +102,30 @@ export default function Home() {
                   />
                 ))}
               </div>
-              {hasMore && (
-                <div ref={ref} className="flex justify-center mt-8">
-                  {loading && (
-                    <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-pink-500"></div>
-                  )}
+              {loading && (
+                <div className="flex justify-center mt-8">
+                  <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-pink-500"></div>
                 </div>
               )}
+              <div className="flex justify-center mt-8">
+                <button
+                  onClick={handlePrevPage}
+                  disabled={page === 1}
+                  className="bg-pink-500 text-white font-bold py-2 px-4 rounded-l disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <span className="bg-gray-200 py-2 px-4">
+                  Page {page} of {totalPages}
+                </span>
+                <button
+                  onClick={handleNextPage}
+                  disabled={page === totalPages}
+                  className="bg-pink-500 text-white font-bold py-2 px-4 rounded-r disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
             </>
           )}
         </section>
