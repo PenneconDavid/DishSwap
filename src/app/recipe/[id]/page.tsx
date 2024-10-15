@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import axios from "axios";
+import Image from "next/image";
 
 export default function RecipeView() {
   const params = useParams();
@@ -181,9 +182,11 @@ export default function RecipeView() {
           <div className="bg-white shadow-lg rounded-lg overflow-hidden">
             <div className="relative">
               {recipe.imageUrl && (
-                <img
+                <Image
                   src={recipe.imageUrl}
                   alt={recipe.title}
+                  width={1200}
+                  height={800}
                   className="w-full h-64 sm:h-96 object-cover"
                 />
               )}

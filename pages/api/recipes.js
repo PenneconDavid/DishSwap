@@ -24,11 +24,7 @@ const runMiddleware = (req, res, fn) => {
 };
 
 export default async function handler(req, res) {
-  const {
-    method,
-    query: { id },
-    body,
-  } = req;
+  const { method, body } = req;
   await dbConnect();
 
   switch (method) {

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Image from "next/image";
 
 export default function RecipeForm() {
   const [title, setTitle] = useState("");
@@ -144,9 +145,11 @@ export default function RecipeForm() {
           />
           {imagePreview && (
             <div className="mt-2">
-              <img
+              <Image
                 src={imagePreview}
                 alt="Recipe preview"
+                width={300}
+                height={200}
                 className="max-w-xs rounded-md"
               />
             </div>
