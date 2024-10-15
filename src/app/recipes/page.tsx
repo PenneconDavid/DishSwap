@@ -27,18 +27,24 @@ export default function BrowseRecipesPage() {
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const recipesPerPage = 9;
+  const [totalPages, setTotalPages] = useState(1);
   const router = useRouter();
 
   useEffect(() => {
     fetchRecipes();
-  }, []);
+  }, [currentPage, filters, searchTerm]);
 
   const fetchRecipes = async () => {
     try {
       setIsLoading(true);
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-      const response = await fetch(`${apiUrl}/api/recipes`);
+      const queryParams = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: "6",
+        ...filters,
+        search: searchTerm,
+      });
+      const response = await fetch(`${apiUrl}/api/recipes?${queryParams}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -48,6 +54,7 @@ export default function BrowseRecipesPage() {
 
       if (data.success) {
         setRecipes(data.data || []);
+        setTotalPages(data.totalPages);
       } else {
         throw new Error("API returned success: false");
       }
@@ -73,23 +80,9 @@ export default function BrowseRecipesPage() {
     setCurrentPage(1);
   };
 
-  const filteredRecipes = recipes.filter((recipe) => {
-    return (
-      recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (filters.cuisine === "" || recipe.cuisine === filters.cuisine) &&
-      (filters.difficulty === "" || recipe.difficulty === filters.difficulty) &&
-      (filters.time === "" || recipe.cookingTime === filters.time)
-    );
-  });
-
-  const indexOfLastRecipe = currentPage * recipesPerPage;
-  const indexOfFirstRecipe = indexOfLastRecipe - recipesPerPage;
-  const currentRecipes = filteredRecipes.slice(
-    indexOfFirstRecipe,
-    indexOfLastRecipe
-  );
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   return (
     <div className="min-h-screen flex flex-col justify-between">
@@ -148,7 +141,7 @@ export default function BrowseRecipesPage() {
             ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {currentRecipes.map((recipe) => (
+                  {recipes.map((recipe) => (
                     <RecipeCard
                       key={recipe._id}
                       _id={recipe._id}
@@ -161,16 +154,12 @@ export default function BrowseRecipesPage() {
                     />
                   ))}
                 </div>
-                {filteredRecipes.length > recipesPerPage && (
+                {totalPages > 1 && (
                   <div className="flex justify-center mt-8">
-                    {Array.from({
-                      length: Math.ceil(
-                        filteredRecipes.length / recipesPerPage
-                      ),
-                    }).map((_, index) => (
+                    {Array.from({ length: totalPages }).map((_, index) => (
                       <button
                         key={index}
-                        onClick={() => paginate(index + 1)}
+                        onClick={() => handlePageChange(index + 1)}
                         className={`mx-1 px-4 py-2 border rounded ${
                           currentPage === index + 1
                             ? "bg-pink-500 text-white"
