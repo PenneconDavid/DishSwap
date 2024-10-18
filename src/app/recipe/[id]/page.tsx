@@ -307,7 +307,7 @@ export default function RecipeView() {
                 Reactions
               </h2>
               <div className="flex space-x-4">
-                {["Cant_wait_to_try_it", "Cooked_it_and_loved_it", "Cooked_and_disliked"].map(
+                {["Cant_wait to try it", "Cooked_it and loved it", "Cooked_and disliked"].map(
                   (reactionType) => (
                     <button
                       key={reactionType}
