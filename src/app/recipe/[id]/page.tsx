@@ -49,84 +49,44 @@ export default function RecipeView() {
   });
 
   useEffect(() => {
-    if (!id) {
-      setError("Recipe ID not found");
-      setLoading(false);
-      return;
-    }
+    if (!id) return;
 
-    const fetchRecipe = async () => {
+    const fetchData = async () => {
       try {
         const apiUrl =
           process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-        const res = await fetch(`${apiUrl}/api/recipes/${id}`);
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        const data = await res.json();
 
-        if (data.success) {
-          setRecipe(data.data);
-        } else {
-          throw new Error("Recipe data not retrieved successfully");
+        // Fetch recipe
+        const recipeRes = await axios.get(`${apiUrl}/api/recipes/${id}`);
+        if (recipeRes.data.success) {
+          setRecipe(recipeRes.data.data);
         }
+
+        // Fetch comments
+        const commentsRes = await axios.get(`${apiUrl}/api/comments`, {
+          params: { recipeId: id },
+        });
+        if (commentsRes.data.success) {
+          setComments(commentsRes.data.data);
+        }
+
+        // Fetch reactions
+        const reactionsRes = await axios.get(
+          `${apiUrl}/api/recipes/${id}/reactions`
+        );
+        if (reactionsRes.data.success) {
+          setReactionCounts(reactionsRes.data.data);
+        }
+
+        setLoading(false);
       } catch (error) {
-        console.error("Failed to fetch recipe", error);
-        setError("Failed to load recipe. Please try again later.");
-      } finally {
+        console.error("Error fetching data:", error);
+        setError("Failed to load recipe data");
         setLoading(false);
       }
     };
 
-    const fetchComments = async () => {
-      try {
-        const apiUrl =
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-        const response = await axios.get(`${apiUrl}/api/comments`, {
-          params: { recipeId: id },
-        });
-
-        if (response.data.success) {
-          setComments(response.data.data);
-        }
-      } catch (error) {
-        console.error("Failed to fetch comments:", error);
-      }
-    };
-
-    const checkFavoriteStatus = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        if (!token) return;
-
-        const response = await axios.get<{ favorites: Favorite[] }>(
-          "/api/favorites",
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-        const favorites = response.data.favorites || [];
-        setIsFavorite(favorites.some((fav: Favorite) => fav._id === id));
-      } catch (error) {
-        console.error("Error checking favorite status:", error);
-      }
-    };
-
-    const fetchReactions = async () => {
-      try {
-        const response = await axios.get(`/api/recipes/${id}/reactions`);
-        if (response.data.success) {
-          setReactionCounts(response.data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching reactions:", error);
-      }
-    };
-
-    fetchRecipe();
-    fetchComments();
-    checkFavoriteStatus();
-    fetchReactions();
+    fetchData();
   }, [id]);
 
   const handleAddComment = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -164,31 +124,27 @@ export default function RecipeView() {
     }
   };
 
-  const handleReaction = async (type: string) => {
-    if (!id) return;
-
-    const token = localStorage.getItem("token");
-    if (!token) {
-      alert("Please log in to react to recipes");
-      return;
-    }
-
+  const handleReaction = async (reactionType: string) => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please log in to react to recipes");
+        return;
+      }
+
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
       const response = await axios.post(
-        `/api/recipes/${id}/reactions`,
-        { reactionType: type },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `${apiUrl}/api/recipes/${id}/reactions`,
+        { reactionType },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (response.data.success) {
-        setReaction(type);
+        setReaction(reactionType);
+        // Update the reaction count
         setReactionCounts((prev) => ({
           ...prev,
-          [type]: response.data.data.count,
+          [reactionType]: (prev[reactionType] || 0) + 1,
         }));
       }
     } catch (error) {

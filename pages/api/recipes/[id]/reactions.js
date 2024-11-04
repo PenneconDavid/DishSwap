@@ -4,17 +4,20 @@ import { verifyToken } from "../../../../middleware/auth";
 import { ObjectId } from "mongodb";
 
 export default async function handler(req, res) {
+  // Add timeout handling
+  res.socket.setTimeout(75000);
+
   const {
     query: { id },
     method,
     body: { reactionType },
   } = req;
 
-  await dbConnect();
+  try {
+    await dbConnect();
 
-  switch (method) {
-    case "POST":
-      await verifyToken(req, res, async () => {
+    switch (method) {
+      case "GET":
         try {
           if (!ObjectId.isValid(id)) {
             return res.status(400).json({
@@ -23,7 +26,7 @@ export default async function handler(req, res) {
             });
           }
 
-          const recipe = await Recipe.findById(id);
+          const recipe = await Recipe.findById(id).lean();
           if (!recipe) {
             return res.status(404).json({
               success: false,
@@ -31,73 +34,85 @@ export default async function handler(req, res) {
             });
           }
 
-          // Initialize reactions Map if it doesn't exist
-          if (!recipe.reactions) {
-            recipe.reactions = new Map([
-              ["Cant_wait", 0],
-              ["Loved_it", 0],
-              ["Disliked", 0],
-            ]);
-          }
+          // Convert reactions Map to plain object
+          const reactions = recipe.reactions
+            ? Object.fromEntries(recipe.reactions)
+            : { Cant_wait: 0, Loved_it: 0, Disliked: 0 };
 
-          // Update the reaction count
-          const currentCount = recipe.reactions.get(reactionType) || 0;
-          recipe.reactions.set(reactionType, currentCount + 1);
-
-          await recipe.save();
-
-          res.status(200).json({
+          return res.status(200).json({
             success: true,
-            data: {
-              reactionType,
-              count: recipe.reactions.get(reactionType),
-            },
+            data: reactions,
           });
         } catch (error) {
-          console.error("Error updating reaction:", error);
-          res.status(500).json({
+          console.error("Error fetching reactions:", error);
+          return res.status(500).json({
             success: false,
-            message: "Error updating reaction",
-          });
-        }
-      });
-      break;
-
-    case "GET":
-      try {
-        if (!ObjectId.isValid(id)) {
-          return res.status(400).json({
-            success: false,
-            message: "Invalid recipe ID",
+            message: "Error fetching reactions",
           });
         }
 
-        const recipe = await Recipe.findById(id);
-        if (!recipe) {
-          return res.status(404).json({
-            success: false,
-            message: "Recipe not found",
-          });
-        }
+      case "POST":
+        await verifyToken(req, res, async () => {
+          try {
+            if (!ObjectId.isValid(id)) {
+              return res.status(400).json({
+                success: false,
+                message: "Invalid recipe ID",
+              });
+            }
 
-        res.status(200).json({
-          success: true,
-          data: Object.fromEntries(recipe.reactions || new Map()),
+            const recipe = await Recipe.findById(id);
+            if (!recipe) {
+              return res.status(404).json({
+                success: false,
+                message: "Recipe not found",
+              });
+            }
+
+            // Initialize reactions Map if it doesn't exist
+            if (!recipe.reactions) {
+              recipe.reactions = new Map([
+                ["Cant_wait", 0],
+                ["Loved_it", 0],
+                ["Disliked", 0],
+              ]);
+            }
+
+            // Update the reaction count
+            const currentCount = recipe.reactions.get(reactionType) || 0;
+            recipe.reactions.set(reactionType, currentCount + 1);
+
+            await recipe.save();
+
+            res.status(200).json({
+              success: true,
+              data: {
+                reactionType,
+                count: recipe.reactions.get(reactionType),
+              },
+            });
+          } catch (error) {
+            console.error("Error updating reaction:", error);
+            res.status(500).json({
+              success: false,
+              message: "Error updating reaction",
+            });
+          }
         });
-      } catch (error) {
-        console.error("Error fetching reactions:", error);
-        res.status(500).json({
+        break;
+
+      default:
+        res.status(405).json({
           success: false,
-          message: "Error fetching reactions",
+          message: "Method not allowed",
         });
-      }
-      break;
-
-    default:
-      res.status(405).json({
-        success: false,
-        message: "Method not allowed",
-      });
-      break;
+        break;
+    }
+  } catch (error) {
+    console.error("Unhandled error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 }

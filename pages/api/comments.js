@@ -3,6 +3,9 @@ import Comment from "../../models/Comment";
 import { verifyToken } from "../../middleware/auth";
 
 export default async function handler(req, res) {
+  // Add timeout handling
+  res.socket.setTimeout(75000);
+
   const { method } = req;
 
   try {
@@ -13,22 +16,29 @@ export default async function handler(req, res) {
         try {
           const { recipeId } = req.query;
           if (!recipeId) {
-            return res
-              .status(400)
-              .json({ success: false, message: "Recipe ID is required" });
+            return res.status(400).json({
+              success: false,
+              message: "Recipe ID is required",
+            });
           }
+
           const comments = await Comment.find({ recipeId })
             .populate("userId", "name")
             .limit(50)
-            .sort({ createdAt: -1 });
-          res.status(200).json({ success: true, data: comments });
+            .sort({ createdAt: -1 })
+            .lean();
+
+          return res.status(200).json({
+            success: true,
+            data: comments,
+          });
         } catch (error) {
           console.error("Error fetching comments:", error);
-          res
-            .status(500)
-            .json({ success: false, message: "Error fetching comments" });
+          return res.status(500).json({
+            success: false,
+            message: "Error fetching comments",
+          });
         }
-        break;
 
       case "POST":
         try {
@@ -61,7 +71,10 @@ export default async function handler(req, res) {
         break;
     }
   } catch (error) {
-    console.error("Unhandled error in comments API:", error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error("Unhandled error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 }
