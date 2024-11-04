@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 const Header = () => {
@@ -22,11 +22,13 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-pink-400 via-red-500 to-yellow-500 p-4 shadow-md">
+    <header className="bg-gradient-to-r from-pink-400 via-red-500 to-yellow-500 p-4 shadow-md transition-colors duration-300">
       <div className="container mx-auto flex justify-between items-center">
         <motion.h1
           className="text-3xl font-bold text-white tracking-wide"
           whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 300 }}
         >
           <Link href="/">DishSwap 🍜</Link>
         </motion.h1>
@@ -55,18 +57,28 @@ const Header = () => {
         </div>
       </div>
       {isMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className="md:hidden mt-4"
-        >
-          <NavLinks
-            isLoggedIn={isLoggedIn}
-            handleLogout={handleLogout}
-            isMobile={true}
+        <>
+          <motion.div
+            className="fixed inset-0 bg-black/50 z-40"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsMenuOpen(false)}
           />
-        </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%" }}
+            transition={{ type: "spring", damping: 25 }}
+            className="fixed right-0 top-0 h-full w-64 bg-gradient-to-b from-pink-400 to-red-500 p-4 shadow-xl z-50 md:hidden"
+          >
+            <NavLinks
+              isLoggedIn={isLoggedIn}
+              handleLogout={handleLogout}
+              isMobile={true}
+            />
+          </motion.div>
+        </>
       )}
     </header>
   );
@@ -83,35 +95,42 @@ const NavLinks: React.FC<NavLinksProps> = ({
   handleLogout,
   isMobile = false,
 }) => {
-  const linkClass = `text-white px-4 py-2 rounded hover:bg-pink-500 transition ${
-    isMobile ? "block w-full text-center my-2" : "inline-block"
-  }`;
+  const pathname = usePathname();
+
+  const linkClass = `relative text-white px-4 py-2 rounded transition-all duration-300 
+    ${isMobile ? "block w-full text-center my-2" : "inline-block"}
+    hover:bg-white/10 hover:shadow-md hover:scale-105`;
+
+  const isActive = (path: string) => pathname === path;
+
+  const getLinkStyles = (path: string) =>
+    `${linkClass} ${isActive(path) ? "bg-white/20 font-semibold" : ""}`;
 
   return (
     <>
-      <Link href="/recipes" className={linkClass}>
+      <Link href="/recipes" className={getLinkStyles("/recipes")}>
         Recipes
       </Link>
       {isLoggedIn ? (
         <>
-          <Link href="/submit" className={linkClass}>
+          <Link href="/submit" className={getLinkStyles("/submit")}>
             Submit
           </Link>
-          <Link href="/profile" className={linkClass}>
+          <Link href="/profile" className={getLinkStyles("/profile")}>
             Profile
           </Link>
-          <button onClick={handleLogout} className={linkClass}>
+          <button onClick={handleLogout} className={getLinkStyles("/logout")}>
             Logout
           </button>
         </>
       ) : (
         <>
-          <Link href="/login" className={linkClass}>
+          <Link href="/login" className={getLinkStyles("/login")}>
             Login
           </Link>
           <Link
             href="/signup"
-            className={`${linkClass} ${!isMobile && "ml-2"}`}
+            className={`${getLinkStyles("/signup")} ${!isMobile && "ml-2"}`}
           >
             Sign Up
           </Link>
