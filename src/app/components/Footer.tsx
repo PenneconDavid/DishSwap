@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const Footer = () => {
   return (
-    <footer className="bg-gradient-to-r from-yellow-500 to-pink-500 text-white">
+    <footer className="bg-[#f4ecdf] text-black">
       <div className="container px-6 py-8 mx-auto">
         {/* Logo and Navigation Section */}
         <div className="flex flex-col items-center text-center">
