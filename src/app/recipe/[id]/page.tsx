@@ -242,117 +242,76 @@ export default function RecipeView() {
   return (
     <div className="min-h-screen flex flex-col justify-between">
       <Header />
-      <main className="flex-grow container mx-auto p-4 sm:p-6">
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+      <main className="flex-grow container mx-auto px-4 sm:px-6 pt-24 pb-12">
+        <div className="max-w-4xl mx-auto bg-white dark:bg-gray-800 shadow-xl rounded-xl overflow-hidden">
           <div className="relative">
             {recipe.imageUrl && (
-              <Image
-                src={recipe.imageUrl}
-                alt={recipe.title}
-                width={1200}
-                height={800}
-                className="w-full h-64 sm:h-96 object-cover"
-                priority={true}
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 1024px, 1200px"
-              />
+              <div className="relative h-[400px]">
+                <Image
+                  src={recipe.imageUrl}
+                  alt={recipe.title}
+                  fill
+                  className="object-cover"
+                  priority={true}
+                  sizes="(max-width: 768px) 100vw, 768px"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              </div>
             )}
-            <div className="absolute top-0 right-0 m-4">
-              <button
-                onClick={handleFavorite}
-                className={`p-2 rounded-full ${
+            <button
+              onClick={handleFavorite}
+              className={`absolute top-4 right-4 p-3 rounded-full shadow-lg backdrop-blur-sm
+                ${
                   isFavorite
-                    ? "bg-pink-500 text-white"
-                    : "bg-white text-pink-500"
-                } hover:bg-pink-600 hover:text-white transition duration-300`}
+                    ? "bg-pink-500/90 text-white"
+                    : "bg-white/90 text-pink-500"
+                } hover:scale-110 transition-all duration-300`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                  />
-                </svg>
-              </button>
-            </div>
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+            </button>
           </div>
-          <div className="p-6">
-            <h1 className="text-3xl font-bold mb-4 text-gray-800">
+          <div className="p-8">
+            <h1 className="text-4xl font-bold mb-6 text-gray-800 dark:text-cream">
               {recipe.title}
             </h1>
-            <p className="text-gray-600 mb-6">{recipe.description}</p>
 
-            <h2 className="text-2xl font-bold mb-2 text-gray-800">
-              Ingredients
-            </h2>
-            <ul className="list-disc list-inside mb-6 text-gray-700">
-              {renderIngredients(recipe.ingredients)}
-            </ul>
+            <p className="text-lg text-gray-600 dark:text-cream/80 mb-8 leading-relaxed">
+              {recipe.description}
+            </p>
 
-            <h2 className="text-2xl font-bold mb-2 text-gray-800">
-              Instructions
-            </h2>
-            <ol className="list-decimal list-inside mb-6 text-gray-700">
-              {renderInstructions(recipe.instructions)}
-            </ol>
-
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800">
-                Reactions
-              </h2>
-              <div className="flex space-x-4">
-                {["Cant_wait to try it", "Cooked_it and loved it", "Cooked_and disliked"].map(
-                  (reactionType) => (
-                    <button
-                      key={reactionType}
-                      onClick={() => handleReaction(reactionType)}
-                      className={`px-4 py-2 rounded-lg ${
-                        reaction === reactionType
-                          ? "bg-pink-500 text-white"
-                          : "bg-gray-200 text-gray-800"
-                      } hover:bg-pink-600 hover:text-white transition duration-300`}
-                    >
-                      {reactionType.replace("_", " ")}
-                    </button>
-                  )
-                )}
+            <div className="grid md:grid-cols-2 gap-8 mb-12">
+              <div>
+                <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-cream flex items-center">
+                  <svg className="w-6 h-6 mr-2" />
+                  Ingredients
+                </h2>
+                <ul className="space-y-2 text-gray-700 dark:text-cream/90">
+                  {renderIngredients(recipe.ingredients)}
+                </ul>
               </div>
-            </div>
 
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4 text-gray-800">
-                Comments
-              </h2>
-              {comments.length > 0 ? (
-                renderComments(comments)
-              ) : (
-                <p className="text-gray-600">
-                  No comments yet. Be the first to comment!
-                </p>
-              )}
-
-              <form onSubmit={handleAddComment} className="mt-6">
-                <textarea
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-pink-500"
-                  rows={3}
-                  placeholder="Add a comment..."
-                  required
-                ></textarea>
-                <button
-                  type="submit"
-                  className="mt-2 px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition duration-300"
-                >
-                  Add Comment
-                </button>
-              </form>
+              <div>
+                <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-cream flex items-center">
+                  <svg className="w-6 h-6 mr-2" />
+                  Instructions
+                </h2>
+                <ol className="space-y-4 text-gray-700 dark:text-cream/90">
+                  {renderInstructions(recipe.instructions)}
+                </ol>
+              </div>
             </div>
           </div>
         </div>
