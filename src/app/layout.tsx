@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
+import BackToTop from "./components/BackToTop";
 
 // Initialize the Inter font
 const inter = Inter({ subsets: ["latin"] });
@@ -33,9 +34,11 @@ export default function RootLayout({
         selection:bg-pink-500
         selection:text-white
         transition-colors duration-300
+        grain-texture
       `}
       >
         <main className="relative pt-10">{children}</main>
+        <BackToTop />
       </body>
     </html>
   );
