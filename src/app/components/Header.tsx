@@ -32,10 +32,8 @@ const Header = () => {
 
   return (
     <motion.header
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-gradient-to-r from-pink-500/95 via-red-500/95 to-yellow-500/95 backdrop-blur-sm shadow-lg py-2 animate-gradient bg-[length:400%_400%]"
-          : "bg-gradient-to-r from-pink-400 via-red-500 to-yellow-500 py-4 animate-gradient bg-[length:400%_400%]"
+      className={`fixed w-full top-0 z-50 transition-all duration-300 bg-gradient-to-r from-coral to-lavender ${
+        isScrolled ? "py-2 shadow-lg" : "py-4"
       }`}
     >
       <div className="container mx-auto flex justify-between items-center">
