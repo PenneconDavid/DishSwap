@@ -89,3 +89,51 @@ html {
     text-wrap: balance;
   }
 }
+
+/* Update your section transitions in globals.css */
+.section-divider {
+  position: relative;
+  height: 8rem; /* Adjust height as needed */
+  margin-top: -4rem;
+  margin-bottom: -4rem;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.section-divider-light {
+  background: linear-gradient(
+    to bottom,
+    #f4ecdf 0%,
+    transparent 50%,
+    #171717 100%
+  );
+}
+
+.section-divider-dark {
+  background: linear-gradient(
+    to bottom,
+    #171717 0%,
+    transparent 50%,
+    #f4ecdf 100%
+  );
+}
+
+@media (prefers-color-scheme: dark) {
+  .section-divider-light {
+    background: linear-gradient(
+      to bottom,
+      #171717 0%,
+      transparent 50%,
+      #f4ecdf 100%
+    );
+  }
+
+  .section-divider-dark {
+    background: linear-gradient(
+      to bottom,
+      #f4ecdf 0%,
+      transparent 50%,
+      #171717 100%
+    );
+  }
+}

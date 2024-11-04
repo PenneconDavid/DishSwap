@@ -94,12 +94,13 @@ export default function Home() {
               </motion.div>
             </div>
           </div>
-          <div className="section-transition section-transition-bottom" />
         </section>
+
+        {/* Divider 1 */}
+        <div className="section-divider section-divider-light" />
 
         {/* Featured Recipes Section */}
         <section className="relative py-20 bg-gray-900 dark:bg-[#F4ECDF] transition-colors duration-300">
-          <div className="section-transition section-transition-top" />
           <div className="container mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center text-[#F4ECDF] dark:text-gray-900">
               Featured Recipes
@@ -152,12 +153,13 @@ export default function Home() {
               </>
             )}
           </div>
-          <div className="section-transition section-transition-bottom" />
         </section>
+
+        {/* Divider 2 */}
+        <div className="section-divider section-divider-dark" />
 
         {/* CTA Section */}
         <section className="relative py-20 bg-[#F4ECDF] dark:bg-gray-900 transition-colors duration-300">
-          <div className="section-transition section-transition-top" />
           <div className="container mx-auto px-6">
             <div className="max-w-3xl mx-auto text-center">
               <motion.div
