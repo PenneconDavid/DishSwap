@@ -41,6 +41,11 @@ export default function RecipeView() {
   const [reaction, setReaction] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [reactionCounts, setReactionCounts] = useState<Record<string, number>>({
+    Cant_wait: 0,
+    Loved_it: 0,
+    Disliked: 0,
+  });
 
   useEffect(() => {
     if (!id) {
@@ -110,9 +115,21 @@ export default function RecipeView() {
       }
     };
 
+    const fetchReactions = async () => {
+      try {
+        const response = await axios.get(`/api/recipes/${id}/reactions`);
+        if (response.data.success) {
+          setReactionCounts(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching reactions:", error);
+      }
+    };
+
     fetchRecipe();
     fetchComments();
     checkFavoriteStatus();
+    fetchReactions();
   }, [id]);
 
   const handleAddComment = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -154,10 +171,26 @@ export default function RecipeView() {
     }
 
     try {
-      setReaction(type);
-      // Add your API call here to save the reaction
+      const response = await axios.post(
+        `/api/recipes/${id}/reactions`,
+        { reactionType: type },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setReaction(type);
+        setReactionCounts((prev) => ({
+          ...prev,
+          [type]: response.data.data.count,
+        }));
+      }
     } catch (error) {
       console.error("Error setting reaction:", error);
+      alert("Failed to save reaction. Please try again.");
     }
   };
 
@@ -382,7 +415,12 @@ export default function RecipeView() {
                       } hover:scale-105 transition-all duration-300`}
                   >
                     <span className="text-xl">{icon}</span>
-                    {label}
+                    <span>{label}</span>
+                    {reactionCounts[type] > 0 && (
+                      <span className="ml-2 px-2 py-1 bg-black/10 dark:bg-white/10 rounded-full text-sm">
+                        {reactionCounts[type]}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
