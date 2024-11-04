@@ -16,8 +16,20 @@ interface Recipe {
   // Add other properties as needed
 }
 
+// Add new interface for statistics
+interface Statistics {
+  totalRecipes: number;
+  totalUsers: number;
+  totalLikes: number;
+}
+
 export default function Home() {
   const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [stats, setStats] = useState<Statistics>({
+    totalRecipes: 0,
+    totalUsers: 0,
+    totalLikes: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(1);
@@ -25,6 +37,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchRecipes();
+    fetchStatistics();
   }, [page]);
 
   async function fetchRecipes() {
@@ -51,6 +64,19 @@ export default function Home() {
       setError("Failed to load recipes. Please try again later.");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchStatistics() {
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      const response = await fetch(`${apiUrl}/api/statistics`);
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    } catch (error) {
+      console.error("Failed to fetch statistics:", error);
     }
   }
 
@@ -91,6 +117,47 @@ export default function Home() {
                 >
                   Explore Recipes
                 </Link>
+                <div className="grid grid-cols-3 gap-8 mt-16 mb-8">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
+                    className="text-center"
+                  >
+                    <div className="text-4xl font-bold text-pink-500">
+                      {stats.totalRecipes}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Total Recipes
+                    </div>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-center"
+                  >
+                    <div className="text-4xl font-bold text-yellow-500">
+                      {stats.totalUsers}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Community Members
+                    </div>
+                  </motion.div>
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4 }}
+                    className="text-center"
+                  >
+                    <div className="text-4xl font-bold text-red-500">
+                      {stats.totalLikes}
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Recipe Likes
+                    </div>
+                  </motion.div>
+                </div>
               </motion.div>
             </div>
           </div>
@@ -158,7 +225,7 @@ export default function Home() {
         {/* Divider 2 */}
         <div className="section-divider section-divider-dark" />
 
-        {/* CTA Section */}
+        {/* CTA Section with Newsletter */}
         <section className="relative py-20 bg-[#F4ECDF] dark:bg-gray-900 transition-colors duration-300">
           <div className="container mx-auto px-6">
             <div className="max-w-3xl mx-auto text-center">
@@ -174,14 +241,42 @@ export default function Home() {
                 <p className="text-xl text-gray-700 dark:text-[#F4ECDF]/80 mb-10">
                   Join our community and let your recipes shine!
                 </p>
-                <Link
-                  href="/submit"
-                  className="bg-gradient-to-r from-yellow-500 to-pink-500 text-white font-bold py-4 px-8 
-                  rounded-full hover:from-yellow-600 hover:to-pink-600 transition duration-300 ease-in-out 
-                  transform hover:-translate-y-1 hover:scale-105 shadow-lg hover:shadow-xl"
-                >
-                  Submit a Recipe
-                </Link>
+                <div className="flex flex-col items-center gap-8">
+                  <Link
+                    href="/submit"
+                    className="bg-gradient-to-r from-yellow-500 to-pink-500 text-white font-bold py-4 px-8 
+                    rounded-full hover:from-yellow-600 hover:to-pink-600 transition duration-300 ease-in-out 
+                    transform hover:-translate-y-1 hover:scale-105 shadow-lg hover:shadow-xl"
+                  >
+                    Submit a Recipe
+                  </Link>
+
+                  <div className="w-full max-w-md mt-8">
+                    <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-[#F4ECDF]">
+                      Stay Updated with New Recipes
+                    </h3>
+                    <form
+                      className="flex gap-2"
+                      onSubmit={(e) => e.preventDefault()}
+                    >
+                      <input
+                        type="email"
+                        placeholder="Enter your email"
+                        className="flex-grow px-4 py-3 rounded-l-full bg-white dark:bg-gray-800 
+                        border border-gray-300 dark:border-gray-700 focus:outline-none 
+                        focus:ring-2 focus:ring-pink-500 dark:text-[#F4ECDF]"
+                      />
+                      <button
+                        type="submit"
+                        className="px-6 py-3 rounded-r-full bg-gradient-to-r from-pink-500 to-yellow-500 
+                        text-white font-semibold hover:from-pink-600 hover:to-yellow-600 
+                        transition duration-300 transform hover:-translate-y-1"
+                      >
+                        Subscribe
+                      </button>
+                    </form>
+                  </div>
+                </div>
               </motion.div>
             </div>
           </div>
