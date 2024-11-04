@@ -65,14 +65,15 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-grow pt-24 pb-16">
-        <section className="bg-gradient-to-b from-[#F4ECDF] to-white py-16">
+        {/* Hero Section */}
+        <section className="py-16 bg-[#F4ECDF] dark:bg-gray-900 transition-colors duration-200">
           <div className="container mx-auto px-6">
             <div className="text-center max-w-3xl mx-auto">
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-800 tracking-tight">
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900 dark:text-[#F4ECDF] tracking-tight">
                 Welcome to DishSwap{" "}
                 <span className="inline-block animate-bounce">🍜</span>
               </h1>
-              <p className="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed">
+              <p className="text-xl md:text-2xl text-gray-700 dark:text-[#F4ECDF]/80 mb-10 leading-relaxed">
                 Discover, share, and swap your favorite recipes with food
                 enthusiasts around the world!
               </p>
@@ -88,9 +89,10 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-16 bg-white">
+        {/* Featured Recipes Section */}
+        <section className="py-16 bg-gray-900 dark:bg-[#F4ECDF] transition-colors duration-200">
           <div className="container mx-auto px-6">
-            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center text-gray-800">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center text-[#F4ECDF] dark:text-gray-900">
               Featured Recipes
             </h2>
             {error ? (
@@ -112,7 +114,7 @@ export default function Home() {
                 </div>
                 {loading && (
                   <div className="flex justify-center my-12">
-                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-pink-500"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[#F4ECDF] dark:border-gray-900"></div>
                   </div>
                 )}
                 <div className="flex justify-center gap-2">
@@ -125,7 +127,7 @@ export default function Home() {
                   >
                     Previous
                   </button>
-                  <span className="bg-gray-100 py-3 px-6 font-medium text-gray-700">
+                  <span className="bg-[#F4ECDF]/10 dark:bg-gray-900/10 py-3 px-6 font-medium text-[#F4ECDF] dark:text-gray-900">
                     Page {page} of {totalPages}
                   </span>
                   <button
@@ -143,13 +145,14 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="py-16 bg-gradient-to-b from-white to-[#F4ECDF]">
+        {/* CTA Section */}
+        <section className="py-16 bg-[#F4ECDF] dark:bg-gray-900 transition-colors duration-200">
           <div className="container mx-auto px-6">
             <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-[#F4ECDF]">
                 Ready to share your culinary masterpiece?
               </h2>
-              <p className="text-xl text-gray-600 mb-10">
+              <p className="text-xl text-gray-700 dark:text-[#F4ECDF]/80 mb-10">
                 Join our community and let your recipes shine!
               </p>
               <Link
