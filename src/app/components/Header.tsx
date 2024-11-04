@@ -22,27 +22,19 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white dark:bg-gray-900 p-4 shadow-lg border-b border-gray-100 dark:border-gray-800">
+    <header className="bg-gradient-to-r from-pink-400 via-red-500 to-yellow-500 p-4 shadow-md transition-colors duration-300">
       <div className="container mx-auto flex justify-between items-center">
-        <motion.div
-          className="relative group"
+        <motion.h1
+          className="text-3xl font-bold text-white tracking-wide"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 300 }}
         >
-          <div className="absolute -inset-[2px] rounded-lg bg-gradient-to-r from-pink-400 via-red-500 to-yellow-500 opacity-70 group-hover:opacity-100 transition-opacity blur-sm" />
-          <Link
-            href="/"
-            className="relative block px-4 py-2 rounded-lg bg-white dark:bg-gray-900 text-3xl font-bold"
-          >
-            DishSwap 🍜
-          </Link>
-        </motion.div>
-
-        <nav className="hidden md:block space-x-2">
+          <Link href="/">DishSwap 🍜</Link>
+        </motion.h1>
+        <nav className="hidden md:block">
           <NavLinks isLoggedIn={isLoggedIn} handleLogout={handleLogout} />
         </nav>
-
         <div className="md:hidden">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -64,11 +56,10 @@ const Header = () => {
           </button>
         </div>
       </div>
-
       {isMenuOpen && (
         <>
           <motion.div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/50 z-40"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -79,7 +70,7 @@ const Header = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: "100%" }}
             transition={{ type: "spring", damping: 25 }}
-            className="fixed right-0 top-0 h-full w-64 bg-white dark:bg-gray-900 p-4 shadow-xl z-50 md:hidden"
+            className="fixed right-0 top-0 h-full w-64 bg-gradient-to-b from-pink-400 to-red-500 p-4 shadow-xl z-50 md:hidden"
           >
             <NavLinks
               isLoggedIn={isLoggedIn}
@@ -106,61 +97,46 @@ const NavLinks: React.FC<NavLinksProps> = ({
 }) => {
   const pathname = usePathname();
 
-  const NavButton = ({
-    href,
-    onClick,
-    children,
-  }: {
-    href?: string;
-    onClick?: () => void;
-    children: React.ReactNode;
-  }) => {
-    const Component = href ? Link : "button";
-    const isActive = href && pathname === href;
+  const linkClass = `relative text-white px-4 py-2 rounded transition-all duration-300 
+    ${isMobile ? "block w-full text-center my-2" : "inline-block"}
+    hover:bg-white/10 hover:shadow-md hover:scale-105`;
 
-    return (
-      <div className="relative group">
-        <div
-          className={`absolute -inset-[2px] rounded-lg bg-gradient-to-r from-pink-400 via-red-500 to-yellow-500 
-          opacity-${
-            isActive ? "100" : "0"
-          } group-hover:opacity-100 transition-opacity`}
-        />
-        <Component
-          href={href as string}
-          onClick={onClick}
-          className={`
-            relative block px-4 py-2 rounded-lg
-            ${isMobile ? "w-full text-center my-2" : "inline-block"}
-            bg-white dark:bg-gray-900 
-            text-gray-800 dark:text-white
-            transition-all duration-300
-            hover:shadow-md
-            ${isActive ? "font-semibold" : "font-medium"}
-          `}
-        >
-          {children}
-        </Component>
-      </div>
-    );
-  };
+  const isActive = (path: string) => pathname === path;
+
+  const getLinkStyles = (path: string) =>
+    `${linkClass} ${isActive(path) ? "bg-white/20 font-semibold" : ""}`;
 
   return (
-    <div className={`${isMobile ? "space-y-2" : "space-x-2"}`}>
-      <NavButton href="/recipes">Recipes</NavButton>
+    <>
+      <Link href="/recipes" className={getLinkStyles("/recipes")}>
+        Recipes
+      </Link>
       {isLoggedIn ? (
         <>
-          <NavButton href="/submit">Submit</NavButton>
-          <NavButton href="/profile">Profile</NavButton>
-          <NavButton onClick={handleLogout}>Logout</NavButton>
+          <Link href="/submit" className={getLinkStyles("/submit")}>
+            Submit
+          </Link>
+          <Link href="/profile" className={getLinkStyles("/profile")}>
+            Profile
+          </Link>
+          <button onClick={handleLogout} className={getLinkStyles("/logout")}>
+            Logout
+          </button>
         </>
       ) : (
         <>
-          <NavButton href="/login">Login</NavButton>
-          <NavButton href="/signup">Sign Up</NavButton>
+          <Link href="/login" className={getLinkStyles("/login")}>
+            Login
+          </Link>
+          <Link
+            href="/signup"
+            className={`${getLinkStyles("/signup")} ${!isMobile && "ml-2"}`}
+          >
+            Sign Up
+          </Link>
         </>
       )}
-    </div>
+    </>
   );
 };
 
