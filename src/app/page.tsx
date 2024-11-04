@@ -262,7 +262,7 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
                 className="h-80 w-80 sm:w-[28rem] sm:h-[28rem] flex-shrink-0 object-cover rounded-full shadow-xl"
-                src="/images/mobile-app.jpg" // Make sure to add your image
+                src="/images/logo2.png"
                 alt="DishSwap Mobile App"
               />
             </div>
@@ -321,7 +321,7 @@ export default function Home() {
         </section>
 
         {/* CTA Section with Newsletter */}
-        <section className="relative py-20 bg-[#F4ECDF] dark:bg-gray-900 transition-colors duration-300">
+        <section className="relative py-20 bg-gray-900 dark:bg-[#F4ECDF] transition-colors duration-300">
           <div className="container mx-auto px-6">
             <div className="max-w-3xl mx-auto text-center">
               <motion.div
