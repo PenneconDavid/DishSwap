@@ -330,10 +330,10 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-[#F4ECDF]">
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-[#F4ECDF] dark:text-gray-900">
                   Ready to share your culinary masterpiece?
                 </h2>
-                <p className="text-xl text-gray-700 dark:text-[#F4ECDF]/80 mb-10">
+                <p className="text-xl text-[#F4ECDF]/80 dark:text-gray-900/80 mb-10">
                   Join our community and let your recipes shine!
                 </p>
                 <div className="flex flex-col items-center gap-8">
