@@ -34,10 +34,33 @@ export default async function handler(req, res) {
             });
           }
 
-          // Convert reactions Map to plain object
-          const reactions = recipe.reactions
-            ? Object.fromEntries(recipe.reactions)
-            : { Cant_wait: 0, Loved_it: 0, Disliked: 0 };
+          // Safely handle reactions whether they exist or not
+          let reactions = {
+            Cant_wait: 0,
+            Loved_it: 0,
+            Disliked: 0,
+          };
+
+          // If recipe has reactions, safely merge them
+          if (recipe.reactions) {
+            try {
+              // Handle both Map and plain object cases
+              const reactionData =
+                recipe.reactions instanceof Map
+                  ? Object.fromEntries(recipe.reactions)
+                  : typeof recipe.reactions === "object"
+                  ? recipe.reactions
+                  : {};
+
+              reactions = {
+                ...reactions,
+                ...reactionData,
+              };
+            } catch (error) {
+              console.error("Error processing reactions:", error);
+              // Continue with default reactions if there's an error
+            }
+          }
 
           return res.status(200).json({
             success: true,
@@ -69,18 +92,18 @@ export default async function handler(req, res) {
               });
             }
 
-            // Initialize reactions Map if it doesn't exist
-            if (!recipe.reactions) {
-              recipe.reactions = new Map([
-                ["Cant_wait", 0],
-                ["Loved_it", 0],
-                ["Disliked", 0],
-              ]);
+            // Initialize reactions as a plain object if it doesn't exist
+            if (!recipe.reactions || typeof recipe.reactions !== "object") {
+              recipe.reactions = {
+                Cant_wait: 0,
+                Loved_it: 0,
+                Disliked: 0,
+              };
             }
 
             // Update the reaction count
-            const currentCount = recipe.reactions.get(reactionType) || 0;
-            recipe.reactions.set(reactionType, currentCount + 1);
+            const currentCount = recipe.reactions[reactionType] || 0;
+            recipe.reactions[reactionType] = currentCount + 1;
 
             await recipe.save();
 
@@ -88,7 +111,7 @@ export default async function handler(req, res) {
               success: true,
               data: {
                 reactionType,
-                count: recipe.reactions.get(reactionType),
+                count: recipe.reactions[reactionType],
               },
             });
           } catch (error) {
