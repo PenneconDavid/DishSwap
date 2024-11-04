@@ -174,9 +174,6 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Divider 1 */}
-        <div className="section-divider section-divider-light" />
-
         {/* Featured Recipes Section */}
         <section className="relative py-20 bg-gray-900 dark:bg-[#F4ECDF] transition-colors duration-300">
           <div className="container mx-auto px-6">
@@ -254,9 +251,6 @@ export default function Home() {
             )}
           </div>
         </section>
-
-        {/* Divider 2 */}
-        <div className="section-divider section-divider-dark" />
 
         {/* CTA Section with Newsletter */}
         <section className="relative py-20 bg-[#F4ECDF] dark:bg-gray-900 transition-colors duration-300">
