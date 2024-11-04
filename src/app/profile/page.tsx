@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import RecipeCard from "../components/RecipeCard";
+import RecipeCardSkeleton from "../components/RecipeCardSkeleton";
 import fallbackImage from "../../../public/images/logo1.png";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -73,7 +74,7 @@ export default function ProfilePage() {
     };
 
     fetchUser();
-  }, [userRecipes]);
+  }, []);
 
   useEffect(() => {
     const fetchTotalLikes = async () => {
@@ -96,7 +97,7 @@ export default function ProfilePage() {
     };
 
     fetchTotalLikes();
-  }, [userRecipes]);
+  }, []);
 
   const getImageUrl = (recipe: Recipe): string => {
     if (recipe.imageData && recipe.imageType) {
