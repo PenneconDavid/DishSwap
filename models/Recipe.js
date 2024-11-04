@@ -21,6 +21,15 @@ const RecipeSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
+  reactions: {
+    type: Map,
+    of: Number,
+    default: new Map([
+      ["Cant_wait", 0],
+      ["Loved_it", 0],
+      ["Disliked", 0],
+    ]),
+  },
 });
 
 export default mongoose.models.Recipe || mongoose.model("Recipe", RecipeSchema);

@@ -144,9 +144,21 @@ export default function RecipeView() {
     }
   };
 
-  const handleReaction = (reactionType: string) => {
-    setReaction(reactionType);
-    // Implement backend logic if needed to save the reaction
+  const handleReaction = async (type: string) => {
+    if (!id) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Please log in to react to recipes");
+      return;
+    }
+
+    try {
+      setReaction(type);
+      // Add your API call here to save the reaction
+    } catch (error) {
+      console.error("Error setting reaction:", error);
+    }
   };
 
   const handleFavorite = async () => {
@@ -179,20 +191,29 @@ export default function RecipeView() {
     }
   };
 
-  const renderInstructions = (instructions: string | undefined) => {
-    if (!instructions) return null;
-    return instructions.split("\n").map((step, index) => (
-      <li key={index} className="mb-2">
-        {step.trim()}
+  const renderIngredients = (ingredients: string | undefined) => {
+    if (!ingredients) return null;
+    return ingredients.split("\n").map((ingredient, index) => (
+      <li key={index} className="flex items-center gap-2">
+        <span className="text-coral">•</span>
+        {ingredient.trim()}
       </li>
     ));
   };
 
-  const renderIngredients = (ingredients: string | undefined) => {
-    if (!ingredients) return null;
-    return ingredients
-      .split("\n")
-      .map((ingredient, index) => <li key={index}>{ingredient.trim()}</li>);
+  const renderInstructions = (instructions: string | undefined) => {
+    if (!instructions) return null;
+    return instructions.split("\n").map((instruction, index) => (
+      <li key={index} className="flex gap-4">
+        <span
+          className="flex-shrink-0 w-8 h-8 rounded-full bg-gradient-custom 
+            flex items-center justify-center text-white font-medium"
+        >
+          {index + 1}
+        </span>
+        <p>{instruction.trim()}</p>
+      </li>
+    ));
   };
 
   const renderComments = (comments: Comment[]) => {
@@ -295,7 +316,20 @@ export default function RecipeView() {
             <div className="grid md:grid-cols-2 gap-8 mb-12">
               <div>
                 <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-cream flex items-center">
-                  <svg className="w-6 h-6 mr-2" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-2 text-coral"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    />
+                  </svg>
                   Ingredients
                 </h2>
                 <ul className="space-y-2 text-gray-700 dark:text-cream/90">
@@ -305,12 +339,52 @@ export default function RecipeView() {
 
               <div>
                 <h2 className="text-2xl font-bold mb-4 text-gray-800 dark:text-cream flex items-center">
-                  <svg className="w-6 h-6 mr-2" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6 mr-2 text-coral"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
                   Instructions
                 </h2>
                 <ol className="space-y-4 text-gray-700 dark:text-cream/90">
                   {renderInstructions(recipe.instructions)}
                 </ol>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-8 mb-12">
+              <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-cream">
+                What did you think?
+              </h2>
+              <div className="flex flex-wrap gap-4">
+                {[
+                  { type: "Cant_wait", icon: "🤤", label: "Can't Wait!" },
+                  { type: "Loved_it", icon: "😋", label: "Loved it!" },
+                  { type: "Disliked", icon: "😕", label: "Not for me" },
+                ].map(({ type, icon, label }) => (
+                  <button
+                    key={type}
+                    onClick={() => handleReaction(type)}
+                    className={`px-6 py-3 rounded-full flex items-center gap-2
+                      ${
+                        reaction === type
+                          ? "bg-gradient-custom text-white shadow-lg"
+                          : "bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-cream"
+                      } hover:scale-105 transition-all duration-300`}
+                  >
+                    <span className="text-xl">{icon}</span>
+                    {label}
+                  </button>
+                ))}
               </div>
             </div>
           </div>
