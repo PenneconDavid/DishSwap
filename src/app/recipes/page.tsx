@@ -87,8 +87,8 @@ export default function BrowseRecipesPage() {
   return (
     <div className="min-h-screen flex flex-col justify-between">
       <Header />
-      <main className="flex-grow container mx-auto p-4 sm:p-6">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-cream mb-8 text-center">
+      <main className="flex-grow container mx-auto px-4 sm:px-6 pt-24 pb-12">
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-cream mb-12 text-center">
           Browse Recipes
         </h1>
 
