@@ -35,6 +35,7 @@ export default function BackToTop() {
           exit={{ opacity: 0, y: 20 }}
           onClick={scrollToTop}
           className="back-to-top"
+          data-visible={isVisible}
           aria-label="Back to top"
         >
           <svg
