@@ -62,87 +62,106 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between">
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="container mx-auto p-6 flex-grow">
-        <section className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 text-gray-800">
-            Welcome to DishSwap 🍜
-          </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Discover, share, and swap your favorite recipes with food
-            enthusiasts around the world!
-          </p>
-          <Link
-            href="/recipes"
-            className="bg-pink-500 text-white font-bold py-3 px-6 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
-          >
-            Explore Recipes
-          </Link>
-        </section>
-
-        <section className="mb-12">
-          <h2 className="text-3xl font-bold mb-6 text-center text-gray-800">
-            Featured Recipes
-          </h2>
-          {error ? (
-            <div className="text-center text-red-500 bg-red-100 border border-red-400 rounded p-4">
-              {error}
+      <main className="flex-grow pt-24 pb-16">
+        <section className="bg-gradient-to-b from-[#F4ECDF] to-white py-16">
+          <div className="container mx-auto px-6">
+            <div className="text-center max-w-3xl mx-auto">
+              <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-800 tracking-tight">
+                Welcome to DishSwap{" "}
+                <span className="inline-block animate-bounce">🍜</span>
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed">
+                Discover, share, and swap your favorite recipes with food
+                enthusiasts around the world!
+              </p>
+              <Link
+                href="/recipes"
+                className="bg-gradient-to-r from-pink-500 to-yellow-500 text-white font-bold py-4 px-8 rounded-full 
+                hover:from-pink-600 hover:to-yellow-600 transition duration-300 ease-in-out transform 
+                hover:-translate-y-1 hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                Explore Recipes
+              </Link>
             </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                {recipes.map((recipe) => (
-                  <RecipeCard
-                    key={recipe._id}
-                    _id={recipe._id}
-                    title={recipe.title}
-                    description={recipe.description}
-                    imageUrl={recipe.imageUrl}
-                  />
-                ))}
-              </div>
-              {loading && (
-                <div className="flex justify-center mt-8">
-                  <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-pink-500"></div>
-                </div>
-              )}
-              <div className="flex justify-center mt-8">
-                <button
-                  onClick={handlePrevPage}
-                  disabled={page === 1}
-                  className="bg-pink-500 text-white font-bold py-2 px-4 rounded-l disabled:opacity-50"
-                >
-                  Previous
-                </button>
-                <span className="bg-gray-200 py-2 px-4">
-                  Page {page} of {totalPages}
-                </span>
-                <button
-                  onClick={handleNextPage}
-                  disabled={page === totalPages}
-                  className="bg-pink-500 text-white font-bold py-2 px-4 rounded-r disabled:opacity-50"
-                >
-                  Next
-                </button>
-              </div>
-            </>
-          )}
+          </div>
         </section>
 
-        <section className="text-center">
-          <h2 className="text-3xl font-bold mb-4 text-gray-800">
-            Ready to share your culinary masterpiece?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Join our community and let your recipes shine!
-          </p>
-          <Link
-            href="/submit"
-            className="bg-yellow-500 text-white font-bold py-3 px-6 rounded-full hover:bg-yellow-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
-          >
-            Submit a Recipe
-          </Link>
+        <section className="py-16 bg-white">
+          <div className="container mx-auto px-6">
+            <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center text-gray-800">
+              Featured Recipes
+            </h2>
+            {error ? (
+              <div className="max-w-2xl mx-auto text-center text-red-500 bg-red-100 border border-red-400 rounded-lg p-4">
+                {error}
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                  {recipes.map((recipe) => (
+                    <RecipeCard
+                      key={recipe._id}
+                      _id={recipe._id}
+                      title={recipe.title}
+                      description={recipe.description}
+                      imageUrl={recipe.imageUrl}
+                    />
+                  ))}
+                </div>
+                {loading && (
+                  <div className="flex justify-center my-12">
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-pink-500"></div>
+                  </div>
+                )}
+                <div className="flex justify-center gap-2">
+                  <button
+                    onClick={handlePrevPage}
+                    disabled={page === 1}
+                    className="bg-gradient-to-r from-pink-500 to-red-500 text-white font-bold py-3 px-6 
+                    rounded-l-full disabled:opacity-50 disabled:cursor-not-allowed transition duration-300
+                    hover:from-pink-600 hover:to-red-600"
+                  >
+                    Previous
+                  </button>
+                  <span className="bg-gray-100 py-3 px-6 font-medium text-gray-700">
+                    Page {page} of {totalPages}
+                  </span>
+                  <button
+                    onClick={handleNextPage}
+                    disabled={page === totalPages}
+                    className="bg-gradient-to-r from-red-500 to-yellow-500 text-white font-bold py-3 px-6 
+                    rounded-r-full disabled:opacity-50 disabled:cursor-not-allowed transition duration-300
+                    hover:from-red-600 hover:to-yellow-600"
+                  >
+                    Next
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        </section>
+
+        <section className="py-16 bg-gradient-to-b from-white to-[#F4ECDF]">
+          <div className="container mx-auto px-6">
+            <div className="max-w-3xl mx-auto text-center">
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-800">
+                Ready to share your culinary masterpiece?
+              </h2>
+              <p className="text-xl text-gray-600 mb-10">
+                Join our community and let your recipes shine!
+              </p>
+              <Link
+                href="/submit"
+                className="bg-gradient-to-r from-yellow-500 to-pink-500 text-white font-bold py-4 px-8 
+                rounded-full hover:from-yellow-600 hover:to-pink-600 transition duration-300 ease-in-out 
+                transform hover:-translate-y-1 hover:scale-105 shadow-lg hover:shadow-xl"
+              >
+                Submit a Recipe
+              </Link>
+            </div>
+          </div>
         </section>
       </main>
       <Footer />
