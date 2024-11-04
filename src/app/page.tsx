@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import RecipeCard from "./components/RecipeCard";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 // Define the Recipe type
 interface Recipe {
@@ -66,31 +67,39 @@ export default function Home() {
       <Header />
       <main className="flex-grow pt-24 pb-16">
         {/* Hero Section */}
-        <section className="py-16 bg-[#F4ECDF] dark:bg-gray-900 transition-colors duration-200">
+        <section className="relative py-20 bg-[#F4ECDF] dark:bg-gray-900 transition-colors duration-300">
           <div className="container mx-auto px-6">
             <div className="text-center max-w-3xl mx-auto">
-              <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900 dark:text-[#F4ECDF] tracking-tight">
-                Welcome to DishSwap{" "}
-                <span className="inline-block animate-bounce">🍜</span>
-              </h1>
-              <p className="text-xl md:text-2xl text-gray-700 dark:text-[#F4ECDF]/80 mb-10 leading-relaxed">
-                Discover, share, and swap your favorite recipes with food
-                enthusiasts around the world!
-              </p>
-              <Link
-                href="/recipes"
-                className="bg-gradient-to-r from-pink-500 to-yellow-500 text-white font-bold py-4 px-8 rounded-full 
-                hover:from-pink-600 hover:to-yellow-600 transition duration-300 ease-in-out transform 
-                hover:-translate-y-1 hover:scale-105 shadow-lg hover:shadow-xl"
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
               >
-                Explore Recipes
-              </Link>
+                <h1 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900 dark:text-[#F4ECDF] tracking-tight">
+                  Welcome to DishSwap{" "}
+                  <span className="inline-block animate-bounce">🍜</span>
+                </h1>
+                <p className="text-xl md:text-2xl text-gray-700 dark:text-[#F4ECDF]/80 mb-10 leading-relaxed">
+                  Discover, share, and swap your favorite recipes with food
+                  enthusiasts around the world!
+                </p>
+                <Link
+                  href="/recipes"
+                  className="inline-block bg-gradient-to-r from-pink-500 to-yellow-500 text-white font-bold py-4 px-8 rounded-full 
+                  hover:from-pink-600 hover:to-yellow-600 transition duration-300 ease-in-out transform 
+                  hover:-translate-y-1 hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  Explore Recipes
+                </Link>
+              </motion.div>
             </div>
           </div>
+          <div className="section-transition section-transition-bottom" />
         </section>
 
         {/* Featured Recipes Section */}
-        <section className="py-16 bg-gray-900 dark:bg-[#F4ECDF] transition-colors duration-200">
+        <section className="relative py-20 bg-gray-900 dark:bg-[#F4ECDF] transition-colors duration-300">
+          <div className="section-transition section-transition-top" />
           <div className="container mx-auto px-6">
             <h2 className="text-3xl md:text-4xl font-bold mb-8 text-center text-[#F4ECDF] dark:text-gray-900">
               Featured Recipes
@@ -143,26 +152,35 @@ export default function Home() {
               </>
             )}
           </div>
+          <div className="section-transition section-transition-bottom" />
         </section>
 
         {/* CTA Section */}
-        <section className="py-16 bg-[#F4ECDF] dark:bg-gray-900 transition-colors duration-200">
+        <section className="relative py-20 bg-[#F4ECDF] dark:bg-gray-900 transition-colors duration-300">
+          <div className="section-transition section-transition-top" />
           <div className="container mx-auto px-6">
             <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-[#F4ECDF]">
-                Ready to share your culinary masterpiece?
-              </h2>
-              <p className="text-xl text-gray-700 dark:text-[#F4ECDF]/80 mb-10">
-                Join our community and let your recipes shine!
-              </p>
-              <Link
-                href="/submit"
-                className="bg-gradient-to-r from-yellow-500 to-pink-500 text-white font-bold py-4 px-8 
-                rounded-full hover:from-yellow-600 hover:to-pink-600 transition duration-300 ease-in-out 
-                transform hover:-translate-y-1 hover:scale-105 shadow-lg hover:shadow-xl"
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
               >
-                Submit a Recipe
-              </Link>
+                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900 dark:text-[#F4ECDF]">
+                  Ready to share your culinary masterpiece?
+                </h2>
+                <p className="text-xl text-gray-700 dark:text-[#F4ECDF]/80 mb-10">
+                  Join our community and let your recipes shine!
+                </p>
+                <Link
+                  href="/submit"
+                  className="bg-gradient-to-r from-yellow-500 to-pink-500 text-white font-bold py-4 px-8 
+                  rounded-full hover:from-yellow-600 hover:to-pink-600 transition duration-300 ease-in-out 
+                  transform hover:-translate-y-1 hover:scale-105 shadow-lg hover:shadow-xl"
+                >
+                  Submit a Recipe
+                </Link>
+              </motion.div>
             </div>
           </div>
         </section>
