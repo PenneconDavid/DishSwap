@@ -9,9 +9,28 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #171717;
     --foreground: #f4ecdf;
   }
+}
+
+/* Section transitions */
+.section-transition {
+  @apply relative overflow-hidden;
+}
+
+.section-transition::before {
+  @apply content-[''] absolute inset-0 w-full h-16 pointer-events-none;
+}
+
+.section-transition-top::before {
+  @apply bg-gradient-to-b from-[#F4ECDF] dark:from-gray-900 to-transparent;
+  top: 0;
+}
+
+.section-transition-bottom::before {
+  @apply bg-gradient-to-t from-[#F4ECDF] dark:from-gray-900 to-transparent;
+  bottom: 0;
 }
 
 /* Enhanced gradient animation */

@@ -25,12 +25,14 @@ export default function RootLayout({
       <body
         className={`
         min-h-screen
-        bg-[#F4ECDF]
+        bg-[#F4ECDF] dark:bg-gray-900
+        text-gray-900 dark:text-[#F4ECDF]
         antialiased
         relative
         overflow-x-hidden
         selection:bg-pink-500
         selection:text-white
+        transition-colors duration-300
       `}
       >
         <main className="relative pt-10">{children}</main>
