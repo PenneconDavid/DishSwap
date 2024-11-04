@@ -42,7 +42,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
   return (
     <motion.div
       whileHover={{ y: -10 }}
-      className="relative p-[2px] rounded-xl bg-gradient-to-r from-coral via-lavender to-coral overflow-hidden"
+      className="relative p-[6px] rounded-xl bg-gradient-to-r from-coral via-lavender to-coral overflow-hidden"
     >
       <div className="bg-[#F4ECDF] dark:bg-gray-900 rounded-xl overflow-hidden relative z-10">
         <Link href={`/recipe/${_id}`}>
@@ -88,10 +88,10 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
             </button>
           </div>
           <div className="p-4">
-            <h3 className="text-xl font-semibold mb-2 text-gray-800">
+            <h3 className="text-xl font-semibold mb-2 text-gray-800 dark:text-[#F4ECDF]">
               {title}
             </h3>
-            <div className="flex justify-between text-sm text-gray-600">
+            <div className="flex justify-between text-sm text-gray-600 dark:text-[#F4ECDF]/80">
               {cookingTime && (
                 <span className="flex items-center">
                   <svg
