@@ -26,6 +26,7 @@ interface Comment {
   text: string;
   userId: {
     name: string;
+    _id: string;
   };
   createdAt: string;
 }
@@ -81,19 +82,15 @@ export default function RecipeView() {
       try {
         const apiUrl =
           process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
-        const res = await fetch(`${apiUrl}/api/comments?recipeId=${id}`);
-        if (!res.ok) {
-          throw new Error(`HTTP error! status: ${res.status}`);
-        }
-        const data = await res.json();
-        if (data.success) {
-          setComments(data.data);
-        } else {
-          throw new Error("Comments data not retrieved successfully");
+        const response = await axios.get(`${apiUrl}/api/comments`, {
+          params: { recipeId: id },
+        });
+
+        if (response.data.success) {
+          setComments(response.data.data);
         }
       } catch (error) {
-        console.error("Failed to fetch comments", error);
-        // Don't set an error state here, just log it
+        console.error("Failed to fetch comments:", error);
       }
     };
 
@@ -137,27 +134,33 @@ export default function RecipeView() {
 
     const token = localStorage.getItem("token");
     if (!token) {
-      alert("You must be logged in to add a comment");
+      alert("Please log in to comment");
       return;
     }
 
     try {
-      const response = await axios.post<{ data: Comment }>(
-        "/api/comments",
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+      const response = await axios.post(
+        `${apiUrl}/api/comments`,
         { recipeId: id, text: newComment },
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      if (response.status === 201) {
-        setComments((prev) => [...prev, response.data.data]);
-        setNewComment("");
+      if (response.data.success) {
+        const commentsResponse = await axios.get(`${apiUrl}/api/comments`, {
+          params: { recipeId: id },
+        });
+
+        if (commentsResponse.data.success) {
+          setComments(commentsResponse.data.data);
+          setNewComment("");
+        }
       }
-    } catch (err) {
-      console.error("Failed to add comment", err);
+    } catch (error) {
+      console.error("Failed to add comment:", error);
+      alert("Failed to add comment. Please try again.");
     }
   };
 
@@ -250,15 +253,34 @@ export default function RecipeView() {
   };
 
   const renderComments = (comments: Comment[]) => {
-    return comments.map((comment) => (
-      <div key={comment._id} className="bg-gray-100 p-4 rounded-lg mb-4">
-        <p className="text-gray-800">{comment.text}</p>
-        <p className="text-sm text-gray-600 mt-2">
-          Posted by {comment.userId?.name || "Anonymous"} on{" "}
-          {new Date(comment.createdAt).toLocaleDateString()}
-        </p>
+    return (
+      <div className="space-y-4">
+        {comments.map((comment) => (
+          <div
+            key={comment._id}
+            className="bg-gray-50 dark:bg-gray-800 p-6 rounded-xl shadow-sm
+              border border-gray-100 dark:border-gray-700"
+          >
+            <p className="text-gray-800 dark:text-cream/90 mb-3">
+              {comment.text}
+            </p>
+            <div className="flex items-center text-sm text-gray-500 dark:text-cream/60">
+              <span className="font-medium">
+                {comment.userId?.name || "Anonymous"}
+              </span>
+              <span className="mx-2">•</span>
+              <time>
+                {new Date(comment.createdAt).toLocaleDateString(undefined, {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </time>
+            </div>
+          </div>
+        ))}
       </div>
-    ));
+    );
   };
 
   if (loading) {
