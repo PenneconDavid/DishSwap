@@ -36,7 +36,7 @@ export default function RootLayout({
       `}
       >
         <div className="fixed inset-0 bg-gradient-to-r from-yellow-500/30 via-purple-500/30 to-red-500/30 pointer-events-none" />
-        <main className="relative pt-20">{children}</main>
+        <main className="relative pt-10">{children}</main>
       </body>
     </html>
   );
