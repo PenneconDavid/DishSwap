@@ -403,6 +403,42 @@ export default function RecipeView() {
                 ))}
               </div>
             </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-8">
+              <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-cream">
+                Comments
+              </h2>
+
+              <div className="space-y-6 mb-8">
+                {comments.length > 0 ? (
+                  renderComments(comments)
+                ) : (
+                  <p className="text-center py-8 text-gray-500 dark:text-cream/60">
+                    No comments yet. Be the first to comment!
+                  </p>
+                )}
+              </div>
+
+              <form onSubmit={handleAddComment} className="mt-8">
+                <textarea
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+                  className="w-full p-4 border border-gray-200 dark:border-gray-600 
+                    rounded-xl focus:ring-2 focus:ring-coral dark:bg-gray-700 
+                    dark:text-cream resize-none transition-all duration-300"
+                  rows={4}
+                  placeholder="Share your thoughts..."
+                  required
+                />
+                <button
+                  type="submit"
+                  className="mt-4 px-6 py-3 bg-gradient-custom text-white rounded-xl
+                    hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  Post Comment
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </main>
