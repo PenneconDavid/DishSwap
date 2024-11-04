@@ -101,7 +101,7 @@ export default function Home() {
             transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
             className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none"
             style={{
-              backgroundImage: "url('/images/pattern.svg')", // Add a subtle pattern image
+              backgroundImage: "/public/images/ramenBlackWhite.jpg", // Add a subtle pattern image
               backgroundSize: "cover",
             }}
           />
