@@ -6,6 +6,7 @@ import Footer from "./components/Footer";
 import RecipeCard from "./components/RecipeCard";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import RecipeCardSkeleton from "./components/RecipeCardSkeleton";
 
 // Define the Recipe type
 interface Recipe {
@@ -93,8 +94,18 @@ export default function Home() {
       <Header />
       <main className="flex-grow pt-24 pb-16">
         {/* Hero Section */}
-        <section className="relative py-20 bg-[#F4ECDF] dark:bg-gray-900 transition-colors duration-300">
-          <div className="container mx-auto px-6">
+        <section className="relative py-20 bg-[#F4ECDF] dark:bg-gray-900 transition-colors duration-300 overflow-hidden">
+          <motion.div
+            initial={{ y: 0 }}
+            animate={{ y: [-10, 10, -10] }}
+            transition={{ repeat: Infinity, duration: 10, ease: "linear" }}
+            className="absolute top-0 left-0 w-full h-full opacity-30 pointer-events-none"
+            style={{
+              backgroundImage: "url('/images/pattern.svg')", // Add a subtle pattern image
+              backgroundSize: "cover",
+            }}
+          />
+          <div className="container mx-auto px-6 relative">
             <div className="text-center max-w-3xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -179,15 +190,37 @@ export default function Home() {
             ) : (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-                  {recipes.map((recipe) => (
-                    <RecipeCard
-                      key={recipe._id}
-                      _id={recipe._id}
-                      title={recipe.title}
-                      description={recipe.description}
-                      imageUrl={recipe.imageUrl}
-                    />
-                  ))}
+                  {loading
+                    ? // Show skeleton loading cards
+                      Array(6)
+                        .fill(0)
+                        .map((_, index) => (
+                          <motion.div
+                            key={index}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.4, delay: index * 0.1 }}
+                          >
+                            <RecipeCardSkeleton />
+                          </motion.div>
+                        ))
+                    : // Show actual recipe cards
+                      recipes.map((recipe) => (
+                        <motion.div
+                          key={recipe._id}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          whileHover={{ y: -10 }}
+                          transition={{ duration: 0.4 }}
+                        >
+                          <RecipeCard
+                            _id={recipe._id}
+                            title={recipe.title}
+                            description={recipe.description}
+                            imageUrl={recipe.imageUrl}
+                          />
+                        </motion.div>
+                      ))}
                 </div>
                 {loading && (
                   <div className="flex justify-center my-12">
