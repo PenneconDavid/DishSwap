@@ -1,5 +1,6 @@
 import dbConnect from "../../lib/mongodb";
 import User from "../../models/User";
+import Recipe from "../../models/Recipe";
 import { verifyToken } from "../../middleware/auth";
 import { addFavoriteRecipe, removeFavoriteRecipe } from "../../utils/userUtils";
 
@@ -37,7 +38,10 @@ export default async function handler(req, res) {
       switch (method) {
         case "GET":
           const favorites = await User.findById(userId)
-            .populate("favorites")
+            .populate({
+              path: "favorites",
+              model: Recipe,
+            })
             .select("favorites");
           return res.status(200).json(favorites);
 
