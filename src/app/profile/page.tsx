@@ -65,97 +65,129 @@ export default function ProfilePage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between">
+    <div className="min-h-screen flex flex-col justify-between bg-cream dark:bg-gray-900">
       <Header />
-      <main className="flex-grow container mx-auto p-4 sm:p-6">
+      <main className="flex-grow container mx-auto p-4 sm:p-6 max-w-7xl">
         {loading ? (
-          <div className="flex justify-center items-center min-h-[300px]">
+          <div className="flex justify-center items-center min-h-[50vh]">
             <motion.div
-              className="w-16 h-16 border-4 border-t-4 border-pink-500 rounded-full"
+              className="w-16 h-16 border-4 border-t-4 border-coral rounded-full"
               animate={{ rotate: 360 }}
               transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
             />
           </div>
         ) : (
           <>
-            <div className="bg-white shadow-md rounded-lg p-6 mb-8">
-              <h1 className="text-4xl font-bold text-gray-800 mb-4">
-                Your Profile
-              </h1>
-              <p className="text-lg text-gray-700">
-                Welcome to your personal recipe hub! Here you can manage your
-                creations and favorites.
-              </p>
-            </div>
-
-            <section className="mb-12">
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-3xl font-bold text-gray-800">
-                  Your Recipes
-                </h2>
+            <div className="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 mb-10 transform hover:scale-[1.02] transition-transform duration-300">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-4xl font-bold bg-gradient-custom text-transparent bg-clip-text mb-4">
+                    Your Profile
+                  </h1>
+                  <p className="text-lg text-gray-600 dark:text-gray-300">
+                    Welcome to your personal recipe hub! Here you can manage
+                    your creations and favorites.
+                  </p>
+                </div>
                 <Link
                   href="/submit"
-                  className="bg-pink-500 text-white font-bold py-2 px-4 rounded-full hover:bg-pink-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
+                  className="bg-gradient-custom text-white font-bold py-3 px-6 rounded-full hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300"
                 >
                   Add New Recipe
                 </Link>
               </div>
+            </div>
+
+            <section className="mb-12 space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-3xl font-bold text-gray-800 dark:text-cream">
+                  Your Recipes
+                </h2>
+              </div>
+
               {userRecipes.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                   {userRecipes.slice(0, 6).map((recipe) => (
-                    <RecipeCard
+                    <motion.div
                       key={recipe._id}
-                      _id={recipe._id}
-                      title={recipe.title}
-                      description={recipe.description}
-                      imageUrl={getImageUrl(recipe)}
-                    />
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <RecipeCard
+                        _id={recipe._id}
+                        title={recipe.title}
+                        description={recipe.description}
+                        imageUrl={getImageUrl(recipe)}
+                        className="h-full transform hover:scale-[1.03] transition-all duration-300"
+                      />
+                    </motion.div>
                   ))}
                 </div>
               ) : (
-                <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded">
-                  <p className="font-bold">No recipes yet!</p>
-                  <p>Start sharing your culinary creations with the world.</p>
-                </div>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="bg-cream dark:bg-gray-800 border-l-4 border-coral p-6 rounded-lg shadow-md"
+                >
+                  <p className="font-bold text-lg mb-2">No recipes yet!</p>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Start sharing your culinary creations with the world.
+                  </p>
+                </motion.div>
               )}
+
               {userRecipes.length > 6 && (
-                <div className="mt-6 text-center">
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                <div className="mt-8 text-center">
+                  <button className="bg-gradient-custom text-white font-bold py-3 px-8 rounded-full hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300">
                     View All Recipes
                   </button>
                 </div>
               )}
             </section>
 
-            <section className="mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">
+            <section className="mb-12 space-y-6">
+              <h2 className="text-3xl font-bold text-gray-800 dark:text-cream">
                 Favorite Recipes
               </h2>
+
               {favoriteRecipes.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                   {favoriteRecipes.slice(0, 6).map((recipe) => (
-                    <RecipeCard
+                    <motion.div
                       key={recipe._id}
-                      _id={recipe._id}
-                      title={recipe.title}
-                      description={recipe.description}
-                      imageUrl={getImageUrl(recipe)}
-                      isFavorite={true}
-                    />
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <RecipeCard
+                        _id={recipe._id}
+                        title={recipe.title}
+                        description={recipe.description}
+                        imageUrl={getImageUrl(recipe)}
+                        isFavorite={true}
+                        className="h-full transform hover:scale-[1.03] transition-all duration-300"
+                      />
+                    </motion.div>
                   ))}
                 </div>
               ) : (
-                <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded">
-                  <p className="font-bold">No favorites yet!</p>
-                  <p>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="bg-cream dark:bg-gray-800 border-l-4 border-lavender p-6 rounded-lg shadow-md"
+                >
+                  <p className="font-bold text-lg mb-2">No favorites yet!</p>
+                  <p className="text-gray-600 dark:text-gray-300">
                     Explore recipes and start building your collection of
                     favorites.
                   </p>
-                </div>
+                </motion.div>
               )}
+
               {favoriteRecipes.length > 6 && (
-                <div className="mt-6 text-center">
-                  <button className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-full transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
+                <div className="mt-8 text-center">
+                  <button className="bg-gradient-custom text-white font-bold py-3 px-8 rounded-full hover:shadow-lg transform hover:-translate-y-1 transition-all duration-300">
                     View All Favorites
                   </button>
                 </div>
