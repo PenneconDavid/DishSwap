@@ -113,13 +113,13 @@ export default function ProfilePage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
+                      className="h-full transform hover:scale-[1.03] transition-all duration-300"
                     >
                       <RecipeCard
                         _id={recipe._id}
                         title={recipe.title}
                         description={recipe.description}
                         imageUrl={getImageUrl(recipe)}
-                        className="h-full transform hover:scale-[1.03] transition-all duration-300"
                       />
                     </motion.div>
                   ))}
@@ -159,6 +159,7 @@ export default function ProfilePage() {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3 }}
+                      className="h-full transform hover:scale-[1.03] transition-all duration-300"
                     >
                       <RecipeCard
                         _id={recipe._id}
@@ -166,7 +167,6 @@ export default function ProfilePage() {
                         description={recipe.description}
                         imageUrl={getImageUrl(recipe)}
                         isFavorite={true}
-                        className="h-full transform hover:scale-[1.03] transition-all duration-300"
                       />
                     </motion.div>
                   ))}
