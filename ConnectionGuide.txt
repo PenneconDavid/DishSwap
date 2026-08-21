@@ -1,0 +1,128 @@
+================================================================================
+                    CONNECTION GUIDE - DISHSWAP
+================================================================================
+
+Last Updated: 2026-08-21
+
+This document contains ports, API endpoints, and connection information
+for DishSwap. Do not put secret values in this file.
+
+================================================================================
+                              RUNTIME
+================================================================================
+
+Local:
+  - Node.js:                24.x (see .nvmrc and package.json engines.node)
+  - Dev server:             http://localhost:3000  (`npm run dev`)
+
+Production:
+  - Hosted URL:             https://dishswap.vercel.app
+  - Vercel project:         dishswap (team davids-projects-32425ea6)
+  - Node.js on Vercel:      24.x (Project Settings + package.json engines)
+
+================================================================================
+                              DATABASE
+================================================================================
+
+  - Provider:               MongoDB Atlas
+  - Connection:             $MONGODB_URI  (set in .env.local and Vercel env)
+  - Client:                 Mongoose (lib/mongodb.js)
+
+================================================================================
+                            AUTH / SECRETS
+================================================================================
+
+  - JWT signing secret:     $JWT_SECRET  (Vercel env / .env.local)
+  - Public API base URL:    $NEXT_PUBLIC_API_URL
+  - Auth header:            Bearer token from POST /api/users (login or register)
+
+================================================================================
+                            API ENDPOINTS
+================================================================================
+
+Base origin (local):        http://localhost:3000
+Base origin (production):   https://dishswap.vercel.app
+
+--------------------------------------------------------------------------------
+USERS (/api/users)
+--------------------------------------------------------------------------------
+
+POST   /api/users
+  Body: { type: "register", name, email, password } or { type: "login", email, password }
+  Auth: No
+  Notes: Uses bcryptjs + JWT
+
+GET    /api/users
+  Auth: No (test helper; returns all users)
+
+--------------------------------------------------------------------------------
+PROFILE (/api/profile)
+--------------------------------------------------------------------------------
+
+GET    /api/profile
+  Auth: Yes (JWT)
+  Returns: name, email, favorites
+
+--------------------------------------------------------------------------------
+RECIPES (/api/recipes)
+--------------------------------------------------------------------------------
+
+GET    /api/recipes
+  Query: page, limit
+  Auth: No
+
+POST   /api/recipes
+  Auth: Yes (JWT)
+  Body: multipart/form-data (multer field "image") plus title, description, ingredients
+  Notes: bodyParser disabled; sizeLimit 20mb
+
+PATCH  /api/recipes
+  Auth: Yes (JWT)
+  Notes: favorite toggle helper on this route
+
+GET    /api/recipes/user
+  Auth: Yes (JWT)
+  Returns: recipes for the authenticated user
+
+GET    /api/recipes/:id
+  Auth: No
+
+GET    /api/recipes/:id/reactions
+  Auth: No
+
+POST   /api/recipes/:id/reactions
+  Auth: Yes (JWT)
+
+--------------------------------------------------------------------------------
+FAVORITES (/api/favorites)
+--------------------------------------------------------------------------------
+
+GET    /api/favorites
+  Auth: Yes (JWT)
+
+POST   /api/favorites
+  Auth: Yes (JWT)
+  Body: { recipeId }
+
+DELETE /api/favorites?id=<recipeId>
+  Auth: Yes (JWT)
+
+--------------------------------------------------------------------------------
+COMMENTS (/api/comments)
+--------------------------------------------------------------------------------
+
+GET    /api/comments?recipeId=<id>
+  Auth: No
+
+POST   /api/comments
+  Auth: Yes (JWT)
+  Body: { recipeId, text }
+
+================================================================================
+                            KNOWN ISSUES
+================================================================================
+
+  - GET /api/recipes currently 500s because MongoDB SRV DNS lookup for the
+    Atlas cluster in $MONGODB_URI fails (querySrv ENOTFOUND). This happens on
+    both Node 20 production and the Node 24 preview, so it is not caused by
+    the Node upgrade. Fix the Atlas cluster / DNS / $MONGODB_URI, then retest.
