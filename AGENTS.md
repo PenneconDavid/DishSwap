@@ -11,6 +11,24 @@
 - **Web app:** `npm run dev` → http://localhost:3000
 - **Production:** https://dishswap.vercel.app
 
+## Commands
+
+| Task | Command |
+|------|---------|
+| Install | `npm install` |
+| Dev server | `npm run dev` → http://localhost:3000 |
+| Typecheck | `npx tsc --noEmit` |
+| Lint | `npm run lint` |
+| Build | `npm run build` |
+
+There is no test runner. Ask before adding one, per the shared dependency rule.
+
+## Definition of done
+
+- Typecheck, lint, and build pass.
+- `visual-qa-testing` on the changed page, console clean.
+- `ConnectionGuide.txt` updated if any API route or MongoDB connection detail changed.
+
 ## Shared config
 
 - **Skills:** `.agents/skills/` → [cursor-skills](https://github.com/PenneconDavid/cursor-skills)
