@@ -12,16 +12,16 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "axios": "^1.18.0",
+    "axios": "^1.21.0",
     "bcryptjs": "^2.4.3",
     "dotenv": "^16.6.1",
     "framer": "^2.4.1",
     "framer-motion": "^10.18.0",
     "jsonwebtoken": "^9.0.3",
-    "mongoose": "^8.24.0",
+    "mongoose": "^8.24.7",
     "motion": "^10.18.0",
-    "multer": "^1.4.5-lts.2",
-    "next": "14.2.35",
+    "multer": "^2.5.0",
+    "next": "^15.5.28",
     "next-connect": "^1.0.0",
     "react": "^18",
     "react-dom": "^18",
@@ -35,9 +35,15 @@
     "@typescript-eslint/parser": "^5.62.0",
     "autoprefixer": "^10.5.0",
     "eslint": "^8",
-    "eslint-config-next": "14.2.35",
-    "postcss": "^8.5.15",
+    "eslint-config-next": "^15.5.28",
+    "postcss": "^8.5.32",
     "tailwindcss": "^3.4.19",
     "typescript": "^5"
+  },
+  "overrides": {
+    "postcss": "^8.5.32",
+    "glob@>=10.0.0": "^10.5.0",
+    "brace-expansion@1": "^1.1.21",
+    "brace-expansion@2": "^2.1.7"
   }
 }

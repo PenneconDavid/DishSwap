@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import fallbackImage from "../../../public/images/logo1.png";
+import fallbackImage from "../../public/images/logo1.png";
 
 interface RecipeCardProps {
   _id: string;
