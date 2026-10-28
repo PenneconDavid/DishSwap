@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ["multer"],
-  },
+  serverExternalPackages: ["multer"],
   async rewrites() {
     return [
       {
