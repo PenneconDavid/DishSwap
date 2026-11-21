@@ -21,7 +21,7 @@
     "mongoose": "^8.24.7",
     "motion": "^10.18.0",
     "multer": "^2.5.0",
-    "next": "^15.5.28",
+    "next": "^15.5.29",
     "next-connect": "^1.0.0",
     "react": "^18",
     "react-dom": "^18",
